@@ -82,6 +82,17 @@ class KhoaHoc {
             callback(null, results);
         });
     }
+
+    static selection_KhoaHoc(callback) {
+        const query = 'select maKhoaHoc, tenKhoaHoc from KhoaHoc';
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
     
 }
 

@@ -98,7 +98,14 @@ class Controller {
         });
     }
     
-    
+    selection(req, res, next) {
+        KhoaHoc.selection_KhoaHoc((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy thông tin khóa học!", error: err});
+            }
+            res.status(200).json(result);
+        })
+    }
 }
 
 module.exports = new Controller();
