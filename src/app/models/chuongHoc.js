@@ -24,6 +24,17 @@ class ChuongHoc {
             })
         })
     }
+
+    static selection (maKhoaHoc, callback) {
+        const query = 'select maChuongHoc, tenChuongHoc from ChuongHoc where maKhoaHoc = ?';
+
+        connection.query(query, maKhoaHoc, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
 }
 
 module.exports = ChuongHoc;

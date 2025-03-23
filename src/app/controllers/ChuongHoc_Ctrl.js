@@ -19,6 +19,21 @@ class Controller {
             })
         })
     }
+
+    selection(req, res) {
+        const maKhoaHoc = req.params.maKhoaHoc;
+
+        if (!maKhoaHoc) {
+            return res.status(400).json({ message: "Thiếu mã khóa học!" });
+        }
+
+        ChuongHoc.selection(maKhoaHoc, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy các chương học!", error: err})
+            }
+            return res.status(200).json(result)
+        })
+    }
 }
 
 module.exports = new Controller();
