@@ -14,12 +14,26 @@ class BaiHoc {
     }
 
     static create_BaiHoc(dataBaiHoc, callback) {
+        const maxID = 'select max(cast(substring(maBaiHoc, 3, 10) as unsigned)) as maxID from BaiHoc';
+
         const query = 'insert into BaiHoc set ?';
-        connection.query(query, dataBaiHoc, (err, results) => {
+
+        connection.query(maxID, (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-            callback(null, results);
+
+            let maxID = results[0].maxID ? results[0].maxID + 1 : 1;
+            let newID = `BH${String(maxID).padStart(3, "0")}`;
+
+            dataBaiHoc.maBaiHoc = newID;
+
+            connection.query(query, dataBaiHoc, (err, results) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                callback(null, results);
+            })
         })
     }
 
