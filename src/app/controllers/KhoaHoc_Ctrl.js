@@ -48,7 +48,7 @@ class Controller {
             if (result.affectedRows === 0) {
                 return res.status(404).json({ message: "Không tìm thấy khóa học để cập nhật!" });
             }
-    
+
             res.status(200).json({
                 message: "Sửa khóa học thành công!",
                 data: { maKhoaHoc, ...updatedData },

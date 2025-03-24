@@ -25,6 +25,28 @@ class ChuongHoc {
         })
     }
 
+    static updateLesson (maChuongHoc, dataChuongHoc, callback) {
+        const query = 'update ChuongHoc set ? where maChuongHoc = ?'
+
+        connection.query(query, [dataChuongHoc, maChuongHoc], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    static deleteLesson (maChuongHoc, callback) {
+        const query = 'delete from ChuongHoc where maChuongHoc = ?';
+
+        connection.query(query, maChuongHoc, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
     static selection (maKhoaHoc, callback) {
         const query = 'select maChuongHoc, tenChuongHoc from ChuongHoc where maKhoaHoc = ?';
 
