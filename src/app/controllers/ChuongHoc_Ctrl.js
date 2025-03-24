@@ -34,6 +34,21 @@ class Controller {
             return res.status(200).json(result)
         })
     }
+
+    lessonDetails(req, res) {
+        const maChuongHoc = req.params.maChuongHoc;
+
+        if (!maChuongHoc) {
+            res.status(400).json({ message: "Thiếu mã chương học!"});
+        }
+
+        ChuongHoc.lessonDetails(maChuongHoc, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy thông tin chương!", error: err})
+            }
+            return res.status(200).json(result);
+        })
+    }
 }
 
 module.exports = new Controller();

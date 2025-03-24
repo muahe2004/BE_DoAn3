@@ -35,6 +35,20 @@ class ChuongHoc {
             callback(null, results);
         })
     }
+
+    static lessonDetails (maChuongHoc, callback) {
+        const query = 
+        `select ch.maChuongHoc, ch.tenChuongHoc, kh.maKhoaHoc, kh.tenKhoaHoc 
+        from ChuongHoc ch join KhoaHoc kh on ch.maKhoaHoc = kh.maKhoaHoc 
+        where ch.maChuongHoc = ?`;
+
+        connection.query(query, maChuongHoc, (err, results) => {
+            if (err) {
+                return callback(err, results);
+            }
+            callback(null, results[0]);
+        });
+    }
 }
 
 module.exports = ChuongHoc;
