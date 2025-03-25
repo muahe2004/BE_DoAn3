@@ -58,7 +58,13 @@ class BaiHoc {
     }
    
     static search(maBaiHoc, callback) {
-        const query = 'select * from BaiHoc where maBaiHoc = ?';
+        const query = 
+            `
+                select bh.maBaiHoc, bh.tenBaiHoc, bh.moTaBaiHoc, bh.video, ch.maChuongHoc, ch.tenChuongHoc, kh.maKhoaHoc
+                from BaiHoc bh inner join ChuongHoc ch on bh.maChuongHoc = ch.maChuongHoc
+                    inner join KhoaHoc kh on kh.maKhoaHoc = ch.maKhoaHoc
+                where maBaiHoc = ?;
+            `;
         connection.query(query, maBaiHoc, (err, results) => {
             if (err) {
                 return callback(err, null);

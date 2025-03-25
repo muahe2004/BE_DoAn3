@@ -31,7 +31,7 @@ class Controller {
     }
 
     update (req, res, next) {
-        const maBaiHoc =  req.body.maBaiHoc;
+        const maBaiHoc =  req.params.maBaiHoc;
         const updateData = req.body;
 
         if (!maBaiHoc) {
