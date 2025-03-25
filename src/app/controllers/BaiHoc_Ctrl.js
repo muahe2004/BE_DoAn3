@@ -77,6 +77,21 @@ class Controller {
             res.status(200).json({message: "Đã xóa bài học thành công!"});
         })
     }
+
+    search_baiHoc(req, res) {
+        const maBaiHoc = req.params.maBaiHoc;
+
+        if (!maBaiHoc) {
+            return res.status(400).json({message: "Thiếu mã bài học!"});
+        }
+
+        BaiHoc.search(maBaiHoc, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy thông tin bài học!"});
+            }
+            res.status(200).json(result);
+        })
+    }
     
 }
 

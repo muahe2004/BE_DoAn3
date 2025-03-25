@@ -57,7 +57,15 @@ class BaiHoc {
         })
     }
    
-    
+    static search(maBaiHoc, callback) {
+        const query = 'select * from BaiHoc where maBaiHoc = ?';
+        connection.query(query, maBaiHoc, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            return callback(null, results[0]);
+        })
+    }
     
     
 }

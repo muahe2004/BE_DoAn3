@@ -58,6 +58,25 @@ class ChuongHoc {
         })
     }
 
+    static selection_byLecture(maBaiHoc, callback) {
+        const query = 
+            `
+                select ch.maChuongHoc, ch.tenChuongHoc from ChuongHoc ch where ch.maKhoaHoc = 
+                    (
+                        select ch2.maKhoaHoc 
+                        from BaiHoc bh join ChuongHoc ch2 on bh.maChuongHoc = ch2.maChuongHoc
+                        where bh.maBaiHoc = ?
+                    )
+            `;
+        
+        connection.query(query, maBaiHoc, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
     static lessonDetails (maChuongHoc, callback) {
         const query = 
         `select ch.maChuongHoc, ch.tenChuongHoc, kh.maKhoaHoc, kh.tenKhoaHoc 

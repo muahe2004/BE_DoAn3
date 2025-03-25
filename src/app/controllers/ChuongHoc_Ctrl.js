@@ -78,6 +78,21 @@ class Controller {
         })
     }
 
+    selection_byLecture(req, res) {
+        const maBaiHoc = req.params.maBaiHoc;
+
+        if (!maBaiHoc) {
+            return res.status(400).json({message: "Thiếu mã bài học!"});
+        }
+
+        ChuongHoc.selection_byLecture(maBaiHoc, (err, result) => {
+            if(err) {
+                return res.status(500).json({message: "Lỗi khi lấy các chương học!", error: err});
+            }
+            return res.status(200).json(result);
+        })
+    }
+
     lessonDetails(req, res) {
         const maChuongHoc = req.params.maChuongHoc;
 
