@@ -13,12 +13,25 @@ class NguoiDung {
     }
 
     static create(dataNguoiDung, callback) {
-        const query = 'insert into NguoiDung set ?';
-        connection.query(query, [dataNguoiDung], (err, results) => {
+        const maxIDQuery = 'select max(cast(substring(maNguoiDung, 3, 10) as unsigned)) as maxID from NguoiDung';
+
+        connection.query(maxIDQuery, (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-            callback(null, results);
+
+            let maxID =  results[0].maxID ? results[0].maxID + 1 : 1;
+            let newID = `ND${String(maxID).padStart(3, "0")}`;
+
+            dataNguoiDung.maNguoiDung = newID;
+
+            const query = 'insert into NguoiDung set ?';
+            connection.query(query, dataNguoiDung, (err, results) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                callback(null, results);
+            })
         })
     }
 

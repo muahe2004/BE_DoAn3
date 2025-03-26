@@ -6,6 +6,7 @@ const nguoiDung = require('./nguoiDung');
 const upload = require('./upload');
 const authRoutes = require('./authRoutes');
 const chuongHoc = require('./chuongHoc');
+const dangKyKhoaHoc = require('./dangKyKhoaHoc');
 
 
 
@@ -20,6 +21,7 @@ function route(app) {
     app.use('/', upload)
     app.use('/', authRoutes);
     app.use('/', chuongHoc); 
+    app.use('/', dangKyKhoaHoc);
 }
 
 module.exports = route;
