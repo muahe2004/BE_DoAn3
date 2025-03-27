@@ -106,6 +106,39 @@ class Controller {
             res.status(200).json(result);
         })
     }
+
+    count_Student(req, res) {
+        KhoaHoc.count_Student((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi thống kê số lượng học viên!", error: err});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    Revenue(req, res) {
+        KhoaHoc.Revenue((err, result) => {
+            if(err) {
+                return res.status(500).json({message: "Lỗi khi thống kê doanh thu khóa học!", error: err});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    countLes_Lec(req, res) {
+        const maKhoaHoc = req.params.maKhoaHoc;
+
+        if (!maKhoaHoc) {
+            return res.status(400).json({message: "Chưa có mã khóa học!"});
+        }
+
+        KhoaHoc.count_Les_Lec(maKhoaHoc, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi thống kê chương, bài học của khóa học!", error: err});
+            }
+            res.status(200).json(result);
+        })
+    }
 }
 
 module.exports = new Controller();

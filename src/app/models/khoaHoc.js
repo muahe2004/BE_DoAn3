@@ -13,7 +13,6 @@ class KhoaHoc {
     }
 
     static create_KhoaHoc(dataKhoaHoc, callback) {
-        // Truy vấn lấy ID lớn nhất hiện có
         const getMaxIdQuery = "SELECT MAX(CAST(SUBSTRING(MaKhoaHoc, 3, 10) AS UNSIGNED)) AS maxId FROM KhoaHoc";
     
         connection.query(getMaxIdQuery, (err, results) => {
@@ -21,14 +20,11 @@ class KhoaHoc {
                 return callback(err, null);
             }
     
-            // Lấy mã ID lớn nhất, nếu không có thì bắt đầu từ 1
             let maxId = results[0].maxId ? results[0].maxId + 1 : 1;
-            let newId = `KH${String(maxId).padStart(3, "0")}`; // Định dạng KH001, KH002,...
+            let newId = `KH${String(maxId).padStart(3, "0")}`; 
     
-            // Gán mã mới vào dataKhoaHoc
             dataKhoaHoc.MaKhoaHoc = newId;
     
-            // Chèn dữ liệu vào bảng
             const query = "INSERT INTO KhoaHoc SET ?";
             connection.query(query, dataKhoaHoc, (err, results) => {
                 if (err) {
@@ -94,6 +90,62 @@ class KhoaHoc {
         })
     }
     
+    // Thống kê số lượng học viên của các khóa học
+    static count_Student(callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, count(dk.maDangKy) as soLuongHocVien
+                from KhoaHoc kh join DangKyKhoaHoc dk on kh.maKhoaHoc = dk.maKhoaHoc
+                group by kh.maKhoaHoc, kh.tenKhoaHoc
+                having count(dk.maDangKy) > 0
+                order by soLuongHocVien desc
+            `;
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    // Doanh thu
+    static Revenue(callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, count(dk.maDangKy) * kh.giaBan as doanhThu
+                from KhoaHoc kh join DangKyKhoaHoc dk on kh.maKhoaHoc = dk.maKhoaHoc
+                group by kh.maKhoaHoc, kh.tenKhoaHoc
+                having count(dk.maDangKy) > 0
+                order by doanhThu desc;
+            `;
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    // Tổng số chương, bài học của khóa học
+    static count_Les_Lec(maKhoaHoc ,callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, count(distinct ch.maChuongHoc) as tongSoChuong, count(bh.maBaiHoc) as tongSoBaiHoc
+                from KhoaHoc kh left join ChuongHoc ch on kh.maKhoaHoc = ch.maKhoaHoc
+                left join BaiHoc bh on ch.maChuongHoc = bh.maChuongHoc
+                where kh.maKhoaHoc = ?
+                group by kh.maKhoaHoc, kh.tenKhoaHoc
+                order by tongSoChuong desc, tongSoBaiHoc desc;
+            `;
+        connection.query(query, [maKhoaHoc], (err, results) => {
+            if(err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
 }
 
 module.exports = KhoaHoc;

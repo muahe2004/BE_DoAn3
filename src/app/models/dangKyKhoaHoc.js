@@ -23,8 +23,6 @@ class DangKyKhoaHoc {
                 callback(null, results);
             })
         })
-
-        
     }
 };
 
