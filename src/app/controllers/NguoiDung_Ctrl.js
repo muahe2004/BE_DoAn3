@@ -1,10 +1,16 @@
 const { response } = require('express');
 const NguoiDung = require('../models/nguoiDung');
 const authMiddleware = require('../middlewares/authMiddleware'); 
+const bcrypt = require('bcryptjs');
+
 
 class Controller {
     index(req, res) {
         authMiddleware(req, res, () => {
+            if (req.user.role !== 'admin') {
+                return res.status(403).json({ message: 'Bạn không có quyền truy cập!' });
+            }
+    
             NguoiDung.index((err, result) => {
                 if (err) {
                     return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
@@ -14,25 +20,44 @@ class Controller {
         });
     }
 
+
     create(req, res) {
         const data_NguoiDung = req.body;
 
         if (!data_NguoiDung || Object.keys(data_NguoiDung).length === 0) {
-            return res.status(400).json({message: 'Dữ liệu không lệ!'});
+            return res.status(400).json({ message: 'Dữ liệu không hợp lệ!' });
         }
 
-        NguoiDung.create(data_NguoiDung, (err, result) => {
+        const { email, matKhau, loaiNguoiDung } = data_NguoiDung;
+
+        // 🔥 Kiểm tra username đã tồn tại chưa
+        NguoiDung.findByUsername(email, async (err, user) => {
             if (err) {
-                return res.status(500).json(err);
+                return res.status(500).json({ message: 'Lỗi server', error: err });
             }
-            return res.status(200).json({
-                message: 'Thêm người dùng thành công!',
-                data: {
-                    id: result.insertId, ...data_NguoiDung
-                },
-            })
-        })
+            if (user.length > 0) {
+                return res.status(400).json({ message: 'Tên tài khoản đã tồn tại!' });
+            }
+
+            try {
+                const hashedPassword = await bcrypt.hash(matKhau, 10);
+                const newUser = { ...data_NguoiDung, matKhau: hashedPassword, loaiNguoiDung: loaiNguoiDung || 'Học viên' };
+
+                NguoiDung.create(newUser, (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Lỗi khi thêm người dùng', error: err });
+                    }
+                    return res.status(200).json({
+                        message: 'Thêm người dùng thành công!',
+                        data: { id: result.insertId, email, role: newUser.role },
+                    });
+                });
+            } catch (error) {
+                return res.status(500).json({ message: 'Lỗi khi mã hóa mật khẩu', error });
+            }
+        });
     }
+
 
     update(req, res) {
         const maNguoiDung = req.params.maNguoiDung;

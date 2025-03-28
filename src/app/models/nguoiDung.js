@@ -12,6 +12,17 @@ class NguoiDung {
         })
     }
 
+    static findByUsername(username, callback) {
+        const query = 'select * from NguoiDung where email = ?';
+        
+        connection.query(query, [username], (err, results) => {
+            if(err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
     static create(dataNguoiDung, callback) {
         const maxIDQuery = 'select max(cast(substring(maNguoiDung, 3, 10) as unsigned)) as maxID from NguoiDung';
 

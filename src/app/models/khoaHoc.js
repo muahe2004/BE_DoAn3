@@ -15,8 +15,14 @@ class KhoaHoc {
     static home_feeCourses(callback) {
         const query = 
             `
-                select kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan, COUNT(dk.maDangKy) as soLuongDangKy
-                from KhoaHoc kh join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+                select 
+                    kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan, 
+                    count(distinct dk.maDangKy) as soLuongDangKy,
+                    count(distinct bh.maBaiHoc) AS tongSoBaiHoc
+                from KhoaHoc kh
+                    join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+                    left join ChuongHoc ch on ch.maKhoaHoc = kh.maKhoaHoc
+                    left join BaiHoc bh on bh.maChuongHoc = ch.maChuongHoc
                 where giaBan > 0
                 group by kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan
                 order by soLuongDangKy desc
@@ -29,6 +35,31 @@ class KhoaHoc {
             }
             callback(null, result);
         })
+    }
+
+    static home_no_feeCourses(callback) {
+        const query = 
+        `
+            select 
+                kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan, 
+                count(distinct dk.maDangKy) as soLuongDangKy,
+                count(distinct bh.maBaiHoc) AS tongSoBaiHoc
+            FROM KhoaHoc kh
+                join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+                left join ChuongHoc ch on ch.maKhoaHoc = kh.maKhoaHoc
+                left join BaiHoc bh on bh.maChuongHoc = ch.maChuongHoc
+            where giaBan = 0
+            group by kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan
+            order by soLuongDangKy desc
+            limit 4;
+        `;
+
+        connection.query(query, (err, result) => {
+            if (err) {
+                callback(err, null);
+            }
+            callback(null, result);
+        });
     }
 
     static create_KhoaHoc(dataKhoaHoc, callback) {

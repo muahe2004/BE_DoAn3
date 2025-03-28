@@ -20,6 +20,15 @@ class Controller {
         })
     }
 
+    home_no_feeCourses(req, res) {
+        KhoaHoc.home_no_feeCourses((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy 4 khóa học miễn phí!", error: err});
+            }
+            res.status(200).json(result);
+        })
+    }
+
     create(req, res, next) {
         const newKhoaHoc = req.body; 
         

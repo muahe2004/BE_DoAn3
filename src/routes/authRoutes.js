@@ -17,19 +17,15 @@ const users = [
     }
 ];
 
-// 📌 Đăng nhập và nhận token
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    // Kiểm tra người dùng có tồn tại không
     const user = users.find(u => u.username === username);
     if (!user) return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
 
-    // Kiểm tra mật khẩu
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
 
-    // Tạo token JWT
     const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: '1h',
     });
