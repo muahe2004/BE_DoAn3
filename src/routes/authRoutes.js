@@ -1,36 +1,45 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const NguoiDung = require('../app/models/nguoiDung');
 require('dotenv').config();
-const authMiddleware = require('../app/middlewares/authMiddleware');
-
 
 const router = express.Router();
 
-// Dữ liệu người dùng mẫu
-const users = [
-    { 
-        id: 1, 
-        username: 'admin', 
-        password: bcrypt.hashSync('1234', 10), // 🔥 Mã hóa mật khẩu trước khi lưu
-        role: 'admin' 
-    }
-];
+router.post('/login', (req, res) => {
+    const { email, matKhau } = req.body;
 
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    NguoiDung.findByUsername(email, async (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Lỗi server' });
+        }
+        if (results.length === 0) {
+            return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
+        }
 
-    const user = users.find(u => u.username === username);
-    if (!user) return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
+        const user = results[0];
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
+        const isMatch = await bcrypt.compare(matKhau, user.matKhau);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Sai tài khoản hoặc mật khẩu' });
+        }
 
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
+        const token = jwt.sign(
+            { id: user.maNguoiDung, email: user.email, role: user.loaiNguoiDung },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // 🔥 Đặt res.cookie() TRƯỚC res.json()
+        res.cookie('token', token, {
+            httpOnly: true,   // Chặn truy cập từ JavaScript
+            secure: true,     // Chỉ gửi qua HTTPS
+            sameSite: 'Strict', // Chống CSRF
+            maxAge: 3600000   // Hết hạn sau 1 giờ
+        });
+
+        return res.json({ token });  // ✅ Gửi response sau cùng
     });
-
-    res.json({ token });
 });
 
 module.exports = router;

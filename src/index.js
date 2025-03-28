@@ -25,9 +25,10 @@ const port = 1000;
 
 const cors = require("cors");
 app.use(cors({
-  origin: '*', // Chấp nhận mọi domain
+  origin: "http://localhost:5173",
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Các phương thức được phép
-  allowedHeaders: ['Content-Type', 'Authorization'] // Các headers được phép
+  allowedHeaders: ['Content-Type', 'Authorization'], // Các headers được phép
+  credentials: true  // Cho phép gửi cookies
 }));
 app.use("/uploads", express.static("src/public/uploads"));
 
