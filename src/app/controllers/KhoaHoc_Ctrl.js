@@ -1,3 +1,4 @@
+const { json } = require('express');
 const KhoaHoc = require('../models/khoaHoc'); // Import model
 
 class Controller {
@@ -8,6 +9,15 @@ class Controller {
             }
             res.status(200).json(danhSachKhoaHoc);
         });
+    }
+
+    home_feeCourses(req, res) {
+        KhoaHoc.home_feeCourses((err, result) => {
+            if (err) {
+                return res.status(500),json({message: "LỖi khi lấy 4 khóa học có phí!", error: err});
+            }
+            res.status(200).json(result);
+        })
     }
 
     create(req, res, next) {

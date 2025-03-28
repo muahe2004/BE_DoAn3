@@ -12,6 +12,25 @@ class KhoaHoc {
         })
     }
 
+    static home_feeCourses(callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan, COUNT(dk.maDangKy) as soLuongDangKy
+                from KhoaHoc kh join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+                where giaBan > 0
+                group by kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan
+                order by soLuongDangKy desc
+                limit 4;
+            `;
+
+        connection.query(query, (err, result) => {
+            if(err) {
+                callback(err, null);
+            }
+            callback(null, result);
+        })
+    }
+
     static create_KhoaHoc(dataKhoaHoc, callback) {
         const getMaxIdQuery = "SELECT MAX(CAST(SUBSTRING(MaKhoaHoc, 3, 10) AS UNSIGNED)) AS maxId FROM KhoaHoc";
     

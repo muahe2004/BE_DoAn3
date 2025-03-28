@@ -3,6 +3,7 @@ const router = express.Router();
 const khoaHoc_Ctrl = require('../app/controllers/KhoaHoc_Ctrl');
 
 router.get('/get-all-khoahoc', khoaHoc_Ctrl.index);
+router.get('/api/courses/get-home-fee-courses', khoaHoc_Ctrl.home_feeCourses);
 router.post('/create-khoahoc', khoaHoc_Ctrl.create);
 router.put('/:maKhoaHoc/update-khoahoc', khoaHoc_Ctrl.update);
 router.delete('/:maKhoaHoc/delete-khoahoc', khoaHoc_Ctrl.delete);
