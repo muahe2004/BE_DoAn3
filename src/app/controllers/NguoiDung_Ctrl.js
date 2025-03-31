@@ -124,6 +124,21 @@ class Controller {
             return res.status(200).json({message: "Thông tin người dùng: ", data: result});
         })
     }
+
+    findByEmail(req, res) {
+        const email = req.params.email;
+
+        if (!email) {
+            return res.status(400).json({err: "Chưa có email!"});
+        }
+
+        NguoiDung.findByEmail(email, (err, result) => {
+            if (err) {
+                return res.status(500).json({error: err});
+            }
+            res.status(200).json(result[0]);
+        })
+    }
 }
 
 module.exports = new Controller;

@@ -81,6 +81,17 @@ class NguoiDung {
             callback(null, results);
         });
     }
+
+    static findByEmail(email, callback) {
+        const query = 'select tenNguoiDung, email, soDu, anhDaiDien from NguoiDung where email = ?';
+
+        connection.query(query, [email], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
     
 }
 
