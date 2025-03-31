@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const NguoiDung = require('../app/models/nguoiDung');
 require('dotenv').config();
 
+
 const router = express.Router();
 
 router.post('/login', (req, res) => {
@@ -32,7 +33,7 @@ router.post('/login', (req, res) => {
 
         // 🔥 Đặt res.cookie() TRƯỚC res.json()
         res.cookie('token', token, {
-            httpOnly: true,   // Chặn truy cập từ JavaScript
+            httpOnly: true,  
             secure: true,     // Chỉ gửi qua HTTPS
             sameSite: 'Strict', // Chống CSRF
             maxAge: 3600000   // Hết hạn sau 1 giờ
@@ -41,5 +42,19 @@ router.post('/login', (req, res) => {
         return res.json({ token });  // ✅ Gửi response sau cùng
     });
 });
+
+router.get('/role', (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({message: "Chưa đăng nhập!"});
+        }
+
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({role: user.role});
+    } catch (err) {
+        res.status(401).json({message: "Token không hợp lệ!"})
+    }
+})
 
 module.exports = router;

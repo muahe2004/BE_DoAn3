@@ -15,13 +15,15 @@ const express = require('express');
 
 
 const db = require('./config/db');
-
+const cookieParser = require("cookie-parser");
 // Connect to db
 db.connect();
 
 // Khởi tạo hàm express
 const app = express();
 const port = 1000;
+
+app.use(cookieParser());
 
 const cors = require("cors");
 app.use(cors({
