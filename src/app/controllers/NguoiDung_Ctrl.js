@@ -36,7 +36,7 @@ class Controller {
                 return res.status(500).json({ message: 'Lỗi server', error: err });
             }
             if (user.length > 0) {
-                return res.status(400).json({ message: 'Tên tài khoản đã tồn tại!' });
+                return res.status(409).json({ message: 'Email đã tồn tại!' });
             }
 
             try {
@@ -57,7 +57,6 @@ class Controller {
             }
         });
     }
-
 
     update(req, res) {
         const maNguoiDung = req.params.maNguoiDung;

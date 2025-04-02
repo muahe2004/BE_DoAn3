@@ -7,6 +7,7 @@ const upload = require('./upload');
 const authRoutes = require('./authRoutes');
 const chuongHoc = require('./chuongHoc');
 const dangKyKhoaHoc = require('./dangKyKhoaHoc');
+const authGoogle = require('./auThenGoogle');
 
 
 
@@ -22,6 +23,8 @@ function route(app) {
     app.use('/', authRoutes);
     app.use('/', chuongHoc); 
     app.use('/', dangKyKhoaHoc);
+    app.use('/auth', authGoogle);
+
 }
 
 module.exports = route;

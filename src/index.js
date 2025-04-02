@@ -1,73 +1,82 @@
-// Import part
-const path = require('path');
-
-// Import thư viện vửa cài với lệnh npm install express
-const express = require('express');
-
-// Khởi tạo morgan 
-// const morgan = require('morgan');
-
-// Import express-handlebars
-// const { engine } = require('express-handlebars'); 
-
-// Import method-override
-// const methodOverride = require('method-override');
-
-
-const db = require('./config/db');
+// Import thư viện
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
-// Connect to db
+
+const session = require("express-session");
+const passport = require("./config/passport");
+const authRoutes = require("./routes/authRoutes");
+
+// Import file cấu hình
+const db = require("./config/db");
+const route = require("./routes");
+
+// Kết nối cơ sở dữ liệu
 db.connect();
 
-// Khởi tạo hàm express
+// Khởi tạo ứng dụng Express
 const app = express();
 const port = 1000;
 
-app.use(cookieParser());
+// Cấu hình session
+// app.use(
+//   session({
+//     secret: "secret",
+//     resave: false,
+//     saveUninitialized: false, 
+//   })
+// );
 
-const cors = require("cors");
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Các phương thức được phép
-  allowedHeaders: ['Content-Type', 'Authorization'], // Các headers được phép
-  credentials: true  // Cho phép gửi cookies
-}));
+app.use(passport.initialize());
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    const token = req.user.token;
+
+    // Set token vào cookie
+    res.cookie('token', token, { 
+      httpOnly: true,   // Đảm bảo cookie không thể truy cập từ JavaScript client
+      secure: process.env.NODE_ENV === 'production',  // Chỉ sử dụng https trong môi trường production
+      maxAge: 3600000   // Thời gian hết hạn của cookie (1 giờ)
+    });
+
+    // Sau khi set cookie, chuyển hướng về trang chủ (hoặc bất kỳ URL nào bạn muốn)
+    res.redirect("http://localhost:5173"); // Thay đổi URL nếu cần
+  }
+);
+
+
+// Cấu hình Middleware
+app.use(cookieParser()); // Cho phép đọc cookie từ request
+app.use(express.json()); // Cho phép xử lý dữ liệu JSON từ body request
+app.use(express.urlencoded({ extended: true })); // Xử lý dữ liệu từ form HTML
+app.use(express.static(path.join(__dirname, "public"))); // Thiết lập thư mục chứa file tĩnh
+
+// Cấu hình CORS (Cross-Origin Resource Sharing)
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Chỉ định origin được phép truy cập API
+    methods: ["GET", "POST", "PUT", "DELETE"], // Các phương thức HTTP được phép sử dụng
+    allowedHeaders: ["Content-Type", "Authorization"], // Các headers được phép
+    credentials: true, // Cho phép gửi cookie kèm request
+  })
+);
+
+// Cho phép truy cập thư mục chứa ảnh tải lên
 app.use("/uploads", express.static("src/public/uploads"));
 
-
-
-const route = require('./routes')
-
-app.use(express.json()); // Cho phép đọc JSON từ body
-
-// Middleware để xử lý dữ liệu từ form HTML
-app.use(express.urlencoded({ extended: true }));
-
-// Sử dụng morgan để log request
-// app.use(morgan('combined'));
-
-// Sử dụng template engine
-// app.engine('hbs', engine({
-//   extname: 'hbs', // Cái này để định nghĩa đuôi mở rộng cho ngắn,
-//   helpers: {
-//     sum: (a, b) => a + b,
-//   }
-// })); 
-
-// Sử dụng method override
-// app.use(methodOverride('_method'));
-
-// Cấu hình đường dẫn tới thư mục tĩnh
-app.use(express.static(path.join(__dirname, 'public')));
-
-// app.set('view engine', 'hbs');
-//app.set('views', path.join(__dirname, 'resources', 'views')); // Thư mục chứa các file template
-
-
+// Khởi tạo route
 route(app);
 
-
-
+// Khởi động server
 app.listen(port, () => {
-  console.log(`App listening on port http://localhost:${port}`);
+  console.log(`App listening at http://localhost:${port}`);
 });
+
+
+
+
+

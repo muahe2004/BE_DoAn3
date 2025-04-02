@@ -24,27 +24,31 @@ class NguoiDung {
     }
 
     static create(dataNguoiDung, callback) {
-        const maxIDQuery = 'select max(cast(substring(maNguoiDung, 3, 10) as unsigned)) as maxID from NguoiDung';
-
+        const maxIDQuery = 'SELECT MAX(CAST(SUBSTRING(maNguoiDung, 3, 10) AS UNSIGNED)) AS maxID FROM NguoiDung';
+    
         connection.query(maxIDQuery, (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-
-            let maxID =  results[0].maxID ? results[0].maxID + 1 : 1;
+    
+            let maxID = results[0].maxID ? results[0].maxID + 1 : 1;
             let newID = `ND${String(maxID).padStart(3, "0")}`;
-
+    
             dataNguoiDung.maNguoiDung = newID;
-
+            dataNguoiDung.loaiNguoiDung = 'Học viên';
+            dataNguoiDung.soDu = 0;
+            dataNguoiDung.anhDaiDien = 'http://localhost:1000/uploads/defaultAvatar.png';
+    
             const query = 'insert into NguoiDung set ?';
             connection.query(query, dataNguoiDung, (err, results) => {
                 if (err) {
                     return callback(err, null);
                 }
                 callback(null, results);
-            })
-        })
+            });
+        });
     }
+    
 
     static update(maNguoiDung, data_NguoiDung, callback) {
         const query = 'update NguoiDung set ? where maNguoiDung = ?';

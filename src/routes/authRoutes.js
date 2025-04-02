@@ -46,15 +46,31 @@ router.post('/login', (req, res) => {
 router.get('/role', (req, res) => {
     try {
         const token = req.cookies.token;
-        if (!token) {
-            return res.status(401).json({message: "Chưa đăng nhập!"});
+
+        if (token) {
+            try {
+                const user = jwt.verify(token, process.env.JWT_SECRET);
+                return res.json({ role: user.role });
+            } catch (err) {
+                return res.status(401).json({ message: "Token không hợp lệ!" });
+            }
         }
 
-        const user = jwt.verify(token, process.env.JWT_SECRET);
-        res.json({role: user.role});
+        if (req.user) {
+            return res.json({ role: req.user.role });
+        }
+
+        return res.status(401).json({ message: "Chưa đăng nhập!" });
     } catch (err) {
-        res.status(401).json({message: "Token không hợp lệ!"})
+        res.status(500).json({ message: "Lỗi server!" });
     }
-})
+});
+
+
+
+
+
+
+
 
 module.exports = router;
