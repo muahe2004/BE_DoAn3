@@ -23,7 +23,7 @@ function route(app) {
     app.use('/', authRoutes);
     app.use('/', chuongHoc); 
     app.use('/', dangKyKhoaHoc);
-    app.use('/auth', authGoogle);
+    app.use('/', authGoogle);
 
 }
 

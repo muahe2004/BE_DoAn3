@@ -4,9 +4,8 @@ const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-const session = require("express-session");
 const passport = require("./config/passport");
-const authRoutes = require("./routes/authRoutes");
+// const authRoutes = require("./routes/authRoutes");
 
 // Import file cấu hình
 const db = require("./config/db");
@@ -30,23 +29,22 @@ const port = 1000;
 
 app.use(passport.initialize());
 
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { session: false }),
-  (req, res) => {
-    const token = req.user.token;
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", { session: false }),
+//   (req, res) => {
+//     const token = req.user.token;
 
-    // Set token vào cookie
-    res.cookie('token', token, { 
-      httpOnly: true,   // Đảm bảo cookie không thể truy cập từ JavaScript client
-      secure: process.env.NODE_ENV === 'production',  // Chỉ sử dụng https trong môi trường production
-      maxAge: 3600000   // Thời gian hết hạn của cookie (1 giờ)
-    });
+//     res.cookie('token', token, { 
+//       httpOnly: true,   
+//       secure: process.env.NODE_ENV === 'production',  
+//       maxAge: 3600000   
+//     });
 
-    // Sau khi set cookie, chuyển hướng về trang chủ (hoặc bất kỳ URL nào bạn muốn)
-    res.redirect("http://localhost:5173"); // Thay đổi URL nếu cần
-  }
-);
+    
+//     // res.redirect("http://localhost:5173"); 
+//   }
+// );
 
 
 // Cấu hình Middleware

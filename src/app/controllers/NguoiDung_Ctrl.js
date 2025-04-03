@@ -58,6 +58,7 @@ class Controller {
         });
     }
 
+
     update(req, res) {
         const maNguoiDung = req.params.maNguoiDung;
         const data_NguoiDung = req.body;

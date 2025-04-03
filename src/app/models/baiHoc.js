@@ -73,7 +73,26 @@ class BaiHoc {
         })
     }
     
-    
+    static get_first_lecture(maKhoaHoc, callback) {
+        
+        const query = 
+            `
+                select bh.*
+                from BaiHoc bh 
+                    join ChuongHoc ch on bh.maChuongHoc = ch.maChuongHoc
+                    join KhoaHoc kh on ch.maKhoaHoc = kh.maKhoaHoc
+                where kh.maKhoaHoc = ?
+                order by ch.maChuongHoc, bh.maBaiHoc
+                limit 1;
+            `;
+
+        connection.query(query, maKhoaHoc, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results)
+        })
+    }
 }
 
 module.exports = BaiHoc;

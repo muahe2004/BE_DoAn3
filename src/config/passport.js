@@ -13,24 +13,20 @@ passport.use(
         scope: ["profile", "email"],
       },
       (accessToken, refreshToken, profile, done) => {
-        // Tạo JWT token từ profile của user
+
         const token = jwt.sign(
           {name: profile.displayName, email: profile.emails[0].value },
-          process.env.JWT_SECRET, // Bạn cần thêm biến này vào `.env`
+          process.env.JWT_SECRET, 
           { expiresIn: "1h" }
         );
   
-        // Gán token vào profile để sử dụng sau
         profile.token = token;
         return done(null, profile);
       }
     )
 );
   
-  
-
-// Serialize và Deserialize user để lưu vào session
-passport.serializeUser((user, done) => done(null, user));
+  passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 module.exports = passport;

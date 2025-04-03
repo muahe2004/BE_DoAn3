@@ -92,6 +92,21 @@ class Controller {
             res.status(200).json(result);
         })
     }
+
+    get_first_lecture(req, res) {
+        const maKhoaHoc = req.params.maKhoaHoc;
+
+        if (!maKhoaHoc) {
+            return res.status(400).json({message: "Chưa có mã khóa học!"});
+        }
+
+        BaiHoc.get_first_lecture(maKhoaHoc, (err, result) => {
+            if (err) {
+                return res.status(500).json({Lỗi: "Lỗi: ", err});
+            }
+            res.status(200).json(result[0]);
+        })
+    }
     
 }
 
