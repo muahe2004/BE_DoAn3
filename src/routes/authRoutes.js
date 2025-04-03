@@ -26,7 +26,7 @@ router.post('/login', (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.maNguoiDung, email: user.email, role: user.loaiNguoiDung },
+            { id: user.maNguoiDung, email: user.email, role: user.loaiNguoiDung, soDu: user.soDu },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -66,6 +66,26 @@ router.get('/role', (req, res) => {
     }
 });
 
+router.get('/balance', (req, res) => {
+    try {
+        const token = req.cookies.token;
+        
+        if (token) {
+            try {
+                const user = jwt.verify(token, process.env.JWT_SECRET);
+                return res.json({soDu: user.soDu})
+            } catch (err) {
+                return res.status(401).json({message: "Token không hợp lệ!"});
+            }
+        }
+
+        if (req.user) {
+            return res.json({soDu: user.soDu});
+        }
+    } catch (err) {
+        res.status(500).json({message: "Lỗi server: ", err: err})
+    }
+});
 
 
 
