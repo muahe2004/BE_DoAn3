@@ -2,28 +2,52 @@ const connection = require("../../config/db");
 
 class DangKyKhoaHoc {
     static create(dataDangKy, callback) {
-        const maxIDQuery = 'select max(cast(substring(maDangKy, 3, 10) as unsigned)) as maxID from DangKyKhoaHoc';
+        // Khởi tạo biến @maDangKy
+        connection.query("SET @maDangKy = NULL", (err) => {
+            if (err) return callback(err, null);
 
-        connection.query(maxIDQuery, (err, results) => {
+            // Gọi stored procedure
+            connection.query(
+                "CALL sp_DangKyKhoaHoc(?, ?, ?, ?, @maDangKy)",
+                [
+                    dataDangKy.maKhoaHoc,
+                    dataDangKy.maNguoiDung,
+                    dataDangKy.trangThai,
+                    dataDangKy.giaBan,
+                ],
+                (err, results) => {
+                    if (err) return callback(err, null);
+
+                    // Lấy giá trị @maDangKy sau khi gọi procedure
+                    connection.query("SELECT @maDangKy AS newID", (err, results) => {
+                        if (err) return callback(err, null);
+
+                        const newID = results[0].newID;
+                        callback(null, { maDangKy: newID, ...dataDangKy });
+                    });
+                }
+            );
+        });
+    }
+
+    static get_By_UserID(maNguoiDung, callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, kh.hinhAnh, dk.trangThai
+                from DangKyKhoaHoc dk join KhoaHoc kh on dk.maKhoaHoc = kh.maKhoaHoc
+                where maNguoiDung = ?;
+            `;
+
+        connection.query(query, [maNguoiDung], (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-
-            let maxID =  results[0].maxID ? results[0].maxID + 1 : 1;
-            let newID = `DK${String(maxID).padStart(3, "0")}`;
-
-            dataDangKy.maDangKy = newID;
-
-            const query = 'insert into DangKyKhoaHoc set ?';
-
-            connection.query(query, dataDangKy, (err, results) => {
-                if (err) {
-                    return callback(err, null);
-                }
-                callback(null, results);
-            })
+            callback(null, results);
         })
     }
-};
+}
+
+
+
 
 module.exports = DangKyKhoaHoc;
