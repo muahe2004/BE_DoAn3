@@ -6,7 +6,6 @@ class DangKyKhoaHoc {
         connection.query("SET @maDangKy = NULL", (err) => {
             if (err) return callback(err, null);
 
-            // Gọi stored procedure
             connection.query(
                 "CALL sp_DangKyKhoaHoc(?, ?, ?, ?, @maDangKy)",
                 [
@@ -30,6 +29,7 @@ class DangKyKhoaHoc {
         });
     }
 
+    // Lấy các khóa học đã đăng ký
     static get_By_UserID(maNguoiDung, callback) {
         const query = 
             `
@@ -43,6 +43,70 @@ class DangKyKhoaHoc {
                 return callback(err, null);
             }
             callback(null, results);
+        })
+    }
+
+    static benefit(distance, callback) {
+        const query = 
+            `
+                select 
+                    date_format(ngayDangKy, '%Y-%m') as thang,
+                    sum(kh.giaBan) as doanhThu
+                from DangKyKhoaHoc dk join KhoaHoc kh on kh.maKhoaHoc = dk.maKhoaHoc
+                where ngayDangKy >= date_sub(curdate(), interval 12 month)
+                    and ngayDangKy <= curdate()
+                group by Thang 
+                order by thang asc
+                limit 12
+            `;
+        connection.query(query, [distance], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    static most(callback) {
+        const query = 
+            `
+                select kh.maKhoaHoc, kh.tenKhoaHoc, count(dk.maNguoiDung) as soHocVien
+                from KhoaHoc kh join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+                group by kh.maKhoaHoc, kh.tenKhoaHoc
+                order by soHocVien desc
+                limit 5
+            `;
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    static sumStudent(callback) {
+        const query = 'select count(distinct maNguoiDung) as hocVien from DangKyKhoaHoc';
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results[0].hocVien);
+        })
+    }
+
+    static sumBenefit(callback) {
+        const query = 
+            `
+                select sum(kh.giaBan) as tongDoanhThu 
+                from DangKyKhoaHoc dk join KhoaHoc kh on dk.maKhoaHoc = kh.maKhoaHoc`;
+        
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results[0].tongDoanhThu)
         })
     }
 }

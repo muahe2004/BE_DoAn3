@@ -158,6 +158,24 @@ class Controller {
             res.status(200).json(result);
         })
     }
+
+    countFree(req, res) {
+        KhoaHoc.countFree((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi thống kê"});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    countVip(req, res) {
+        KhoaHoc.countVip((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi thống kê"});
+            }
+            res.status(200).json(result);
+        })
+    }
 }
 
 module.exports = new Controller();

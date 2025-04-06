@@ -196,6 +196,28 @@ class KhoaHoc {
             callback(null, results);
         })
     }
+
+    static countFree(callback) {
+        const query = 'select count(maKhoaHoc) as freeCourses from KhoaHoc where giaBan = 0';
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results[0].freeCourses);
+        })
+    }
+
+    static countVip(callback) {
+        const query = 'select count(maKhoaHoc) as vipCourses from KhoaHoc where giaBan > 0';
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results[0].vipCourses);
+        })
+    }
 }
 
 module.exports = KhoaHoc;

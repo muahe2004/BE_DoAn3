@@ -38,6 +38,43 @@ class Controller {
         })
     }
     
+    benefit(req, res) {
+        const distance = req.params.distance;
+
+        DangKyKhoaHoc.benefit(distance, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi thống kê doanh thu"});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    most(req, res) {
+        DangKyKhoaHoc.most((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy khóa học có nhiều học viên nhất"});
+            }
+            res.status(200).json(result)
+        })
+    }
+
+    sumStudent(req, res) {
+        DangKyKhoaHoc.sumStudent((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi tính số học viên"});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    sumBenefit(req, res) {
+        DangKyKhoaHoc.sumBenefit((err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi tính doanh thu"});
+            }
+            res.status(200).json(result);
+        })
+    }
 }
 
 module.exports = new Controller;
