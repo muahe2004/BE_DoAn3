@@ -9,6 +9,4 @@ router.get("/courses/most", dangKyKhoaHoc_Ctrl.most);
 router.get("/courses/sum-student", dangKyKhoaHoc_Ctrl.sumStudent);
 router.get("/courses/sum-benefit", dangKyKhoaHoc_Ctrl.sumBenefit);
 
-
-
 module.exports = router;

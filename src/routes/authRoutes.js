@@ -87,10 +87,14 @@ router.get('/balance', (req, res) => {
     }
 });
 
+router.post('/logout', (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict'
+    });
 
-
-
-
-
+    res.status(200).json({ message: "Đăng xuất thành công!" });
+});
 
 module.exports = router;

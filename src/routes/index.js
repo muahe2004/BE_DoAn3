@@ -8,6 +8,8 @@ const authRoutes = require('./authRoutes');
 const chuongHoc = require('./chuongHoc');
 const dangKyKhoaHoc = require('./dangKyKhoaHoc');
 const authGoogle = require('./auThenGoogle');
+const paymentMomo = require('./paymentMomo');
+
 
 
 
@@ -24,6 +26,7 @@ function route(app) {
     app.use('/', chuongHoc); 
     app.use('/', dangKyKhoaHoc);
     app.use('/', authGoogle);
+    app.use('/', paymentMomo);
 
 }
 
