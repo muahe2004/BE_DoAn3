@@ -97,6 +97,17 @@ class NguoiDung {
         })
     }
     
+    static deposit(amount, maNguoiDUng, callback) {
+        const query = 'update nguoiDung set soDu = soDu + ? where maNguoiDUng = ?';
+    
+        connection.query(query, [amount, maNguoiDUng], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        });
+    }
+    
 }
 
 module.exports = NguoiDung;

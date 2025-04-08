@@ -24,6 +24,8 @@ class Controller {
     create(req, res) {
         const data_NguoiDung = req.body;
 
+        console.log(data_NguoiDung);
+
         if (!data_NguoiDung || Object.keys(data_NguoiDung).length === 0) {
             return res.status(400).json({ message: 'Dữ liệu không hợp lệ!' });
         }

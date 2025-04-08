@@ -1,6 +1,7 @@
 // controllers/paymentController.js
 const crypto = require('crypto');
 const axios = require('axios');
+const nguoiDung_Model = require("../models/nguoiDung");
 
 exports.createPayment = async (req, res) => {
   const { amount, orderInfo } = req.body;
@@ -8,8 +9,8 @@ exports.createPayment = async (req, res) => {
   var accessKey = 'F8BBA842ECF85';
   var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
   var partnerCode = 'MOMO';
-  var redirectUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
-  var ipnUrl = 'https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b';
+  var redirectUrl = 'http://localhost:5173/payment-done';
+  var ipnUrl = 'https://cf2c-113-183-3-184.ngrok-free.app/payment/ipn';
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -66,14 +67,24 @@ exports.handleReturnUrl = (req, res) => {
 };
 
 exports.handleIPN = (req, res) => {
-  const { resultCode, orderId } = req.body;
+  const { resultCode, orderId, amount, transId } = req.body;
   console.log('IPN Response:', req.body);
 
   if (resultCode === 0) {
-    console.log(`Giao dịch thành công cho orderId: ${orderId}`);
-    // Cập nhật trạng thái đơn hàng trong DB
+    console.log(`✅ Giao dịch thành công - orderId: ${orderId}, amount: ${amount}, transId: ${transId}`);
+
+    const maNguoiDung = "ND008";
+
+    nguoiDung_Model.deposit(amount, maNguoiDung, (err, result) => {
+      if (err) {
+        console.error('❌ Lỗi cập nhật số dư:', err);
+      } else {
+        console.log(`✅ Cập nhật số dư thành công cho người dùng: ${maNguoiDung}`);
+      }
+    });
+
   } else {
-    console.log(`Giao dịch thất bại với orderId: ${orderId}`);
+    console.log(`❌ Giao dịch thất bại - orderId: ${orderId}, resultCode: ${resultCode}`);
   }
 
   res.status(200).send('IPN received');

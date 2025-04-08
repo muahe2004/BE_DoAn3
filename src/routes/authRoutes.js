@@ -34,12 +34,12 @@ router.post('/login', (req, res) => {
         // 🔥 Đặt res.cookie() TRƯỚC res.json()
         res.cookie('token', token, {
             httpOnly: true,  
-            secure: true,     // Chỉ gửi qua HTTPS
+            secure: true,    
             sameSite: 'Strict', // Chống CSRF
-            maxAge: 3600000   // Hết hạn sau 1 giờ
+            maxAge: 3600000   
         });
 
-        return res.json({ token });  // ✅ Gửi response sau cùng
+        return res.json({ token });  
     });
 });
 
