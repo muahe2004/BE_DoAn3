@@ -1,24 +1,38 @@
 // controllers/paymentController.js
 const crypto = require('crypto');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const nguoiDung_Model = require("../models/nguoiDung");
 
 exports.createPayment = async (req, res) => {
   const { amount, orderInfo } = req.body;
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ message: 'Thiếu token xác thực' });
+
+  let maNguoiDung;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    maNguoiDung = decoded.id;
+  } catch (err) {
+    return res.status(403).json({ message: 'Token không hợp lệ' });
+  }
 
   var accessKey = 'F8BBA842ECF85';
   var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
   var partnerCode = 'MOMO';
   var redirectUrl = 'http://localhost:5173/payment-done';
-  var ipnUrl = 'https://cf2c-113-183-3-184.ngrok-free.app/payment/ipn';
+  var ipnUrl = 'https://5e3e-113-183-3-184.ngrok-free.app/payment/ipn';
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
-  var extraData = '';
+  // var extraData = '';
   var paymentCode = 'T8Qii53fAXyUftPV3m9ysyRhEanUs9KlOPfHgpMR0ON50U10Bh+vZdpJU7VY4z+Z2y77fJHkoDc69scwwzLuW5MzeUKTwPo3ZMaB29imm6YulqnWfTkgzqRaion+EuD7FN9wZ4aXE1+mRt0gHsU193y+yxtRgpmY7SDMU9hCKoQtYyHsfFR5FUAOAKMdw2fzQqpToei3rnaYvZuYaxolprm9+/+WIETnPUDlxCYOiw7vPeaaYQQH0BF0TxyU3zu36ODx980rJvPAgtJzH1gUrlxcSS1HQeQ9ZaVM1eOK/jl8KJm6ijOwErHGbgf/hVymUQG65rHU2MWz9U8QUjvDWA==';
   var orderGroupId = '';
   var autoCapture = true;
   var lang = 'vi';
+
+  // Gán mã người dùng vào extraData
+  const extraData = Buffer.from(JSON.stringify({ maNguoiDung })).toString('base64');
 
   // Tạo rawSignature trước khi ký
   var rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
@@ -67,24 +81,27 @@ exports.handleReturnUrl = (req, res) => {
 };
 
 exports.handleIPN = (req, res) => {
-  const { resultCode, orderId, amount, transId } = req.body;
-  console.log('IPN Response:', req.body);
+  const { resultCode, orderId, amount, transId, extraData } = req.body;
+  // console.log('IPN Response:', req.body);
 
   if (resultCode === 0) {
-    console.log(`✅ Giao dịch thành công - orderId: ${orderId}, amount: ${amount}, transId: ${transId}`);
+    // console.log(`Giao dịch thành công - orderId: ${orderId}, amount: ${amount}, transId: ${transId}`);
 
-    const maNguoiDung = "ND008";
+    // Giải mã extraData để lấy mã người dùng
+    const extra = JSON.parse(Buffer.from(extraData, 'base64').toString());
+    const maNguoiDung = extra.maNguoiDung;
+
 
     nguoiDung_Model.deposit(amount, maNguoiDung, (err, result) => {
       if (err) {
-        console.error('❌ Lỗi cập nhật số dư:', err);
+        console.error('Lỗi cập nhật số dư:', err);
       } else {
-        console.log(`✅ Cập nhật số dư thành công cho người dùng: ${maNguoiDung}`);
+        console.log(`Cập nhật số dư thành công cho người dùng: ${maNguoiDung}`);
       }
     });
 
   } else {
-    console.log(`❌ Giao dịch thất bại - orderId: ${orderId}, resultCode: ${resultCode}`);
+    console.log(`Giao dịch thất bại - orderId: ${orderId}, resultCode: ${resultCode}`);
   }
 
   res.status(200).send('IPN received');
