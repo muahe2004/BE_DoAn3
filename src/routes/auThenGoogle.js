@@ -12,6 +12,13 @@ router.get("/profile", authController.profile);
 router.get("/login-success", authController.loginSuccess);
 router.get("/logout", authController.logout);
 
+router.get("/auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account"
+}));
+
+
+
 router.get(
     "/auth/google/callback",
     passport.authenticate("google", { session: false }),

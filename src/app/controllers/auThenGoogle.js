@@ -13,7 +13,7 @@ class AuthController {
         }
         res.redirect("http://localhost:5173");
     }
-
+    
     logout(req, res) {
         req.logout(() => {
             req.session.destroy(() => {

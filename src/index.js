@@ -74,6 +74,9 @@ app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
 
+// app.listen(1000, '0.0.0.0', () => console.log("Running on 0.0.0.0:3000"));
+
+
 
 
 
