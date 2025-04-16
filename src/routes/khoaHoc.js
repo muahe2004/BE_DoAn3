@@ -8,7 +8,7 @@ router.get('/api/courses/get-home-no-fee-courses', khoaHoc_Ctrl.home_no_feeCours
 router.post('/create-khoahoc', khoaHoc_Ctrl.create);
 router.put('/:maKhoaHoc/update-khoahoc', khoaHoc_Ctrl.update);
 router.delete('/:maKhoaHoc/delete-khoahoc', khoaHoc_Ctrl.delete);
-router.get('/:tenKhoaHoc/search-khoahoc', khoaHoc_Ctrl.search);
+router.get('/api/courses/search/:tenKhoaHoc', khoaHoc_Ctrl.search);
 router.get('/getByID/:maKhoaHoc', khoaHoc_Ctrl.getByID);
 router.get('/selection-khoahoc', khoaHoc_Ctrl.selection);
 router.get('/api/courses/count-student', khoaHoc_Ctrl.count_Student);
