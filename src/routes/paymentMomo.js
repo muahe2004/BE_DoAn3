@@ -13,4 +13,3 @@ router.get("/payment/return", momoController.handleReturnUrl);
 router.post("/payment/ipn", momoController.handleIPN);
 
 module.exports = router;
-

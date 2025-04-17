@@ -23,41 +23,75 @@ router.get(
     "/auth/google/callback",
     passport.authenticate("google", { session: false }),
     (req, res) => {
-        if (!req.user || !req.user.token) {
-            return res.redirect("/login");
+        if (!req.user || !req.user.emails || req.user.emails.length === 0) {
+            return res.json({Lỗi: "Lỗi"});
         }
 
-        const newUser = {
-            tenNguoiDung: req.user.displayName,
-            email: req.user.emails[0].value,
-            matKhau: req.user.id,
-            anhDaiDien: req.user.photos[0].value,
-        }
+        const email = req.user.emails[0].value;
 
-        req.body = newUser;
+        NguoiDung.findByUsername(email, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: "Lỗi truy vấn người dùng!", error: err });
+            }
 
-        usersController.create(req, {
-            status: (code) => ({
-                json: (data) => {
-                    const token = jwt.sign(
-                        {
-                            maNguoiDung: data.maNguoiDung,
-                            email: newUser.email,
-                            loaiNguoiDung: "Học viên",
-                            tenNguoiDung: newUser.tenNguoiDung,
-                        },
-                        process.env.JWT_SECRET,
-                        { expiresIn: '1d' }
-                    );
+            if (result && result.length > 0) {
+                // 👉 Đã tồn tại => tạo token và trả về
+                const user = result[0];
 
-                    res.cookie('token', token, {
-                        httpOnly: true,
-                        secure: false,
-                        maxAge: 3600000,
-                    });
-                    return res.redirect(`http://localhost:5173`);
+                const token = jwt.sign(
+                    {
+                        id: user.maNguoiDung,
+                        email: user.email,
+                        role: "Học viên",
+                        tenNguoiDung: user.tenNguoiDung,
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1d' }
+                );
+
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    maxAge: 3600000,
+                });
+
+                return res.redirect(`http://localhost:5173`);
+            }
+
+            // ❌ Chưa tồn tại => tạo mới
+            const newUser = {
+                tenNguoiDung: req.user.displayName,
+                email: email,
+                matKhau: req.user.id,
+                anhDaiDien: req.user.photos[0].value || 'http://localhost:1000/uploads/defaultAvatar.png',
+            };
+
+            NguoiDung.create(newUser, (err, resultCreate) => {
+                if (err) {
+                    return res.status(500).json({ message: "Lỗi tạo người dùng mới!", error: err });
                 }
-            })
+
+                const id = newUser.maNguoiDung;
+
+                const token = jwt.sign(
+                    {
+                        id,
+                        email: newUser.email,
+                        role: "Học viên",
+                        tenNguoiDung: newUser.tenNguoiDung,
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1d' }
+                );
+
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: false,
+                    maxAge: 3600000,
+                });
+
+                return res.redirect(`http://localhost:5173`);
+            });
         });
     }
 );

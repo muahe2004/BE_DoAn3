@@ -21,7 +21,7 @@ exports.createPayment = async (req, res) => {
   var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
   var partnerCode = 'MOMO';
   var redirectUrl = 'http://localhost:5173/payment-done';
-  var ipnUrl = 'https://5e3e-113-183-3-184.ngrok-free.app/payment/ipn';
+  var ipnUrl = 'https://2e22-113-162-14-215.ngrok-free.app/payment/ipn';
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -31,13 +31,10 @@ exports.createPayment = async (req, res) => {
   var autoCapture = true;
   var lang = 'vi';
 
-  // Gán mã người dùng vào extraData
   const extraData = Buffer.from(JSON.stringify({ maNguoiDung })).toString('base64');
 
-  // Tạo rawSignature trước khi ký
   var rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
 
-  // HMAC SHA256 signature
   const signature = crypto
     .createHmac('sha256', secretKey)
     .update(rawSignature)
@@ -71,7 +68,6 @@ exports.createPayment = async (req, res) => {
     // Trả về URL thanh toán
     res.json({ payUrl: response.data.payUrl });
   } catch (err) {
-    console.error(err.response?.data || err.message);
     res.status(500).json({ message: 'Thanh toán thất bại' });
   }
 };

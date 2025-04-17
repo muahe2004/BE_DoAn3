@@ -69,23 +69,33 @@ router.get('/role', (req, res) => {
 router.get('/balance', (req, res) => {
     try {
         const token = req.cookies.token;
-        
-        if (token) {
-            try {
-                const user = jwt.verify(token, process.env.JWT_SECRET);
-                return res.json({soDu: user.soDu})
-            } catch (err) {
-                return res.status(401).json({message: "Token không hợp lệ!"});
-            }
+
+        if (!token) {
+            return res.status(401).json({ message: "Chưa đăng nhập!" });
         }
 
-        if (req.user) {
-            return res.json({soDu: user.soDu});
-        }
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        const email = user.email;
+
+        // Truy vấn người dùng theo email
+        NguoiDung.findByUsername(email, (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Lỗi server khi truy vấn CSDL', err });
+            }
+
+            if (!results || results.length === 0) {
+                return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+            }
+
+            const soDu = results[0].soDu;
+            return res.json({ soDu });
+        });
+
     } catch (err) {
-        res.status(500).json({message: "Lỗi server: ", err: err})
+        return res.status(401).json({ message: "Token không hợp lệ!", err });
     }
 });
+
 
 router.post('/logout', (req, res) => {
     res.clearCookie('token', {
