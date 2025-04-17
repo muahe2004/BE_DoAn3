@@ -108,6 +108,40 @@ class Controller {
         })
     }
     
+    get_Learning_Lecture(req, res) {
+        const {maChuongHoc, maNguoiDung} = req.body;
+
+        if (!maChuongHoc || !maNguoiDung) {
+            return res.status(400).json({ message: "Thiếu mã bài học hoặc mã người dùng!" });
+        }
+
+        const info = [maChuongHoc, maNguoiDung];
+
+        BaiHoc.get_Learning_Lecture(info, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy các bài học!", err: err});
+            }
+            res.status(200).json(result);
+        })
+    }
+
+    set_Learned(req, res) {
+        const { maBaiHoc, maNguoiDung } = req.body;
+
+        if (!maBaiHoc || !maNguoiDung) {
+            return res.status(400).json({ message: "Thiếu mã bài học hoặc mã người dùng!" });
+        }
+
+        const info = [maBaiHoc, maNguoiDung];
+
+        BaiHoc.set_Learned(info, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: "Lỗi khi cập nhật tiến độ.", err });
+            }
+            res.status(200).json({ message: "Cập nhật tiến độ thành công!" });
+        });
+    }
+
 }
 
 module.exports = new Controller();

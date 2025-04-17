@@ -92,6 +92,32 @@ class BaiHoc {
             }
             callback(null, results)
         })
+    };
+
+    static get_Learning_Lecture(info, callback) {
+        const query = 
+            `
+                select bh.maBaiHoc, bh.tenBaiHoc, bh.moTaBaiHoc, bh.video, bh.maChuongHoc, td.maTienDo, td.daHoanThanh 
+                from BaiHoc bh join TienDoHoc td on td.maBaiHoc = bh.maBaiHoc where maChuongHoc = ? and maNguoiDung = ?;
+            `;
+        
+        connection.query(query, info, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
+    static set_Learned(info, callback) {
+        const query = `update TienDoHoc set daHoanThanh = 1 where maBaiHoc = ? and maNguoiDung = ?`;
+
+        connection.query(query, info, (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, result);
+        })
     }
 }
 
