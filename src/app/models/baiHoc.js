@@ -1,5 +1,6 @@
 // Kết nối cơ sở dữ liệu
 const connection = require('../../config/db');
+const crypto = require('crypto');
 
 class BaiHoc {
 
@@ -118,6 +119,32 @@ class BaiHoc {
             }
             callback(null, result);
         })
+    }
+
+    static insert_TienDo(data, callback) {
+        const { maNguoiDung, baiHocList } = data;
+
+        if (!maNguoiDung || !Array.isArray(baiHocList) || baiHocList.length === 0) {
+            return callback(new Error("Dữ liệu không hợp lệ"));
+        }
+
+        // Bước 1: Tạo mã tiến độ ngẫu nhiên cho mỗi bài học
+        const generateRandomString = (length = 24) => {
+            return crypto.randomBytes(length).toString('hex').slice(0, length);
+        };
+
+        // Bước 2: Tạo dữ liệu thêm
+        const values = baiHocList.map((maBaiHoc) => {
+            const newMaTienDo = generateRandomString();  
+            return [newMaTienDo, maNguoiDung, maBaiHoc];  
+        });
+
+        const insertQuery = "insert into TienDoHoc (MaTienDo, MaNguoiDung, MaBaiHoc) VALUES ?";
+
+        connection.query(insertQuery, [values], (err2, result2) => {
+            if (err2) return callback(err2);
+            callback(null, result2);
+        });
     }
 }
 

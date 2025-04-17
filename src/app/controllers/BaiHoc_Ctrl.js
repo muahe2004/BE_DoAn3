@@ -142,6 +142,25 @@ class Controller {
         });
     }
 
+    insert_TienDo(req, res) {
+        const { maNguoiDung, baiHocList } = req.body;
+
+        // Kiểm tra dữ liệu
+        if (!maNguoiDung || !Array.isArray(baiHocList) || baiHocList.length === 0) {
+            return res.status(400).json({ message: "Dữ liệu không hợp lệ!" });
+        }
+
+        // Gọi model để insert tiến độ
+        BaiHoc.insert_TienDo({ maNguoiDung, baiHocList }, (err, result) => {
+            if (err) {
+                console.error("Lỗi khi thêm tiến độ:", err);
+                return res.status(500).json({ message: "Lỗi server khi thêm tiến độ!" });
+            }
+
+            res.status(201).json({ message: "Thêm tiến độ học thành công!", data: result });
+        });
+    }
+
 }
 
 module.exports = new Controller();

@@ -11,7 +11,7 @@ router.get('/search-bai-hoc/:maBaiHoc', baiHoc_Ctrl.search_baiHoc);
 router.get('/lecture/get-first-lecture/:maKhoaHoc', baiHoc_Ctrl.get_first_lecture);
 router.post('/api/lecture/get-learning-lecture', baiHoc_Ctrl.get_Learning_Lecture);
 router.put('/api/lecture/set-learned', baiHoc_Ctrl.set_Learned);
-
+router.post('/api/lecture/insert-progress', baiHoc_Ctrl.insert_TienDo);
 
 module.exports = router;
 
