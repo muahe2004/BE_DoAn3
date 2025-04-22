@@ -1,16 +1,16 @@
 const { response } = require('express');
 const NguoiDung = require('../models/nguoiDung');
-const authMiddleware = require('../middlewares/authMiddleware'); 
+const { cookieToken } = require('../middlewares/authMiddleware');
 const bcrypt = require('bcryptjs');
 
 
 class Controller {
     index(req, res) {
-        authMiddleware(req, res, () => {
-            if (req.user.role !== 'admin') {
+        cookieToken(req, res, () => {
+            if (req.user.role !== 'Admin') {
                 return res.status(403).json({ message: 'Bạn không có quyền truy cập!' });
             }
-    
+
             NguoiDung.index((err, result) => {
                 if (err) {
                     return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
@@ -19,7 +19,6 @@ class Controller {
             });
         });
     }
-
 
     create(req, res) {
         const data_NguoiDung = req.body;

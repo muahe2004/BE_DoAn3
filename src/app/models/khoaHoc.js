@@ -4,7 +4,26 @@ const connection = require('../../config/db');
 class KhoaHoc {
 
     static getAll_KhoaHoc(callback) {
-        connection.query('select * from KhoaHoc', (err, result) => {
+        const query = 
+            `
+                SELECT 
+                    kh.maKhoaHoc, 
+                    kh.tenKhoaHoc, 
+                    kh.moTaKhoaHoc, 
+                    kh.hinhAnh, 
+                    kh.doKho, 
+                    kh.giaBan, 
+                    COUNT(DISTINCT dk.maDangKy) AS soLuongDangKy,
+                    COUNT(DISTINCT bh.maBaiHoc) AS tongSoBaiHoc
+                FROM KhoaHoc kh
+                    LEFT JOIN DangKyKhoaHoc dk ON dk.maKhoaHoc = kh.maKhoaHoc
+                    LEFT JOIN ChuongHoc ch ON ch.maKhoaHoc = kh.maKhoaHoc
+                    LEFT JOIN BaiHoc bh ON bh.maChuongHoc = ch.maChuongHoc
+                GROUP BY 
+                    kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan;
+
+            `
+        connection.query(query, (err, result) => {
             if (err) {
                 return callback(err, null);
             }

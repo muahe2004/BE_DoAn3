@@ -3,7 +3,7 @@ const connection = require('../../config/db');
 class NguoiDung {
 
     static index(callback) {
-        const query = 'select * from NguoiDung';
+        const query = 'select maNguoiDung, tenNguoiDung, email, soDu, anhDaiDien, loaiNguoiDung from NguoiDung';
         connection.query(query, (err, results) => {
             if (err) {
                 return callback(err, null);
