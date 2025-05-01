@@ -13,13 +13,31 @@ class DapAn {
     }
 
     static create(dataDapAn, callback) {
-        const query = 'insert into DapAn set ?';
-        connection.query(query, [dataDapAn], (err, results) => {
+
+        if (!dataDapAn || Object.keys(dataDapAn).length === 0) {
+            return callback(new Error("Dữ liệu không hợp lệ!"), null);
+        }
+    
+        const getMaxIDQuery = 'SELECT MAX(CAST(SUBSTRING(maDapAn, 3, 10) AS UNSIGNED)) AS maxID FROM DapAn';
+        const insertQuery = 'INSERT INTO DapAn SET ?';
+    
+        connection.query(getMaxIDQuery, (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-            callback(null, results);
-        })
+    
+            const maxID = results[0].maxID ? results[0].maxID + 1 : 1;
+            const newID = `DA${String(maxID).padStart(3, '0')}`;
+    
+            dataDapAn.maDapAn = newID;
+    
+            connection.query(insertQuery, dataDapAn, (err, insertResult) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                return callback(null, insertResult);
+            });
+        });
     }
 
     static update(maDapAn, dataDapAn, callback) {

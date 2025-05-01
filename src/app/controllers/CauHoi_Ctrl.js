@@ -14,22 +14,26 @@ class Controller {
 
     create(req, res) {
         const data_CauHoi = req.body;
-        
+    
         if (!data_CauHoi || Object.keys(data_CauHoi).length === 0) {
-            return res.status(400).json({message: "Dữ liệu không hợp lệ!"})
+            return res.status(400).json({ message: "Dữ liệu không hợp lệ!" });
         }
-
+    
         CauHoi.create_CauHoi(data_CauHoi, (err, result) => {
             if (err) {
-                return res.status(500).json({message: "Lỗi khi thêm câu hỏi!", error: err});
+                return res.status(500).json({ message: "Lỗi khi thêm câu hỏi!", error: err });
             }
+    
+            // Trả về mã câu hỏi đã thêm (maCauHoi)
             res.status(200).json({
-                message: "Thêm câu hỏi không thành công!",
-                data: {id: result.insertId, ...data_CauHoi},
-            })
-        })
+                maCauHoi: data_CauHoi.maCauHoi, 
+                ...data_CauHoi
+            });
+        });
     }
+    
 
+    
     update(req, res, next) {
         const maCauHoi = req.params.maCauHoi;
         const data_CauHoi = req.body;

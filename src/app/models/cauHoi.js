@@ -13,14 +13,34 @@ class CauHoi {
     } 
 
     static create_CauHoi(data_CauHoi, callback) {
-        const query = 'insert into CauHoi set ?'
-        connection.query(query, data_CauHoi, (err, results) => {
+        if (!data_CauHoi || Object.keys(data_CauHoi).length === 0) {
+            return callback(new Error("Dữ liệu không hợp lệ!"), null);
+        }
+    
+        const getMaxIDQuery = 'SELECT MAX(CAST(SUBSTRING(maCauHoi, 3, 10) AS UNSIGNED)) AS maxID FROM CauHoi';
+        const insertQuery = 'INSERT INTO CauHoi SET ?';
+    
+        connection.query(getMaxIDQuery, (err, results) => {
             if (err) {
                 return callback(err, null);
             }
-            callback(null, results)
+    
+            const maxID = results[0].maxID ? results[0].maxID + 1 : 1;
+            const newID = `CH${String(maxID).padStart(3, '0')}`;
+    
+            // Gán ID mới cho data
+            data_CauHoi.maCauHoi = newID;
+    
+            // Thực hiện thêm câu hỏi
+            connection.query(insertQuery, data_CauHoi, (err, insertResult) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                return callback(null, insertResult);
+            });
         });
     }
+    
 
     static update_CauHoi(maCauHoi, data_CauHoi, callback) {
         const query = 'update CauHoi set ? where maCauHoi = ?';

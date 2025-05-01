@@ -3,9 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const passport = require('../config/passport');
 const authController = require('../app/controllers/auThenGoogle');
-const usersController = require('../app/controllers/NguoiDung_Ctrl');
 const NguoiDung = require("../app/models/nguoiDung");
-
 
 router.get("/", authController.home);
 router.get("/profile", authController.profile);
@@ -16,8 +14,6 @@ router.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email"],
     prompt: "select_account"
 }));
-
-
 
 router.get(
     "/auth/google/callback",
@@ -35,7 +31,7 @@ router.get(
             }
 
             if (result && result.length > 0) {
-                // 👉 Đã tồn tại => tạo token và trả về
+                // Đã tồn tại thì tạo token
                 const user = result[0];
 
                 const token = jwt.sign(
@@ -58,7 +54,7 @@ router.get(
                 return res.redirect(`http://localhost:5173`);
             }
 
-            // ❌ Chưa tồn tại => tạo mới
+            // Chưa tồn tại thì tạo mới
             const newUser = {
                 tenNguoiDung: req.user.displayName,
                 email: email,
@@ -120,7 +116,7 @@ router.get("/auth-google/get-user-info", (req, res) => {
                 return res.status(404).json({ message: "Không tìm thấy người dùng!" });
             }
 
-            return res.status(200).json(result[0]); // chỉ trả 1 user
+            return res.status(200).json(result[0]); 
         });
 
     } catch (err) {
