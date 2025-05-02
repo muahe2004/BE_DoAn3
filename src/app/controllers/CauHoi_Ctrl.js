@@ -12,6 +12,21 @@ class Controller {
         })
     }
 
+    get_byID(req, res) {
+        const maCauHoi = req.params.maCauHoi;
+
+        if (!maCauHoi) {
+            return res.status(400).json({ message: "Chưa có mã câu hỏi!" });
+        }
+
+        CauHoi.get_CauHoi_byID(maCauHoi, (err, result) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi lấy thông tin câu hỏi", error: err});
+            }
+            res.status(200).json(result[0]);
+        })
+    }
+
     create(req, res) {
         const data_CauHoi = req.body;
     

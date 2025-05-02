@@ -12,6 +12,28 @@ class CauHoi {
         })
     } 
 
+    static get_CauHoi_byID(maCauHoi, callback) {
+        const query = 
+        `
+            select 
+                CH.noiDung,
+                BH.maBaiHoc,
+                BH.maChuongHoc,
+                CHH.maKhoaHoc
+            from CauHoi CH
+            join BaiHoc BH on CH.maBaiHoc = BH.maBaiHoc
+            join ChuongHoc CHH on BH.maChuongHoc = CHH.maChuongHoc
+            join KhoaHoc KH on CHH.maKhoaHoc = KH.maKhoaHoc
+            where trim(CH.maCauHoi) = ?;
+        `;
+        connection.query(query, [maCauHoi], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
+    }
+
     static create_CauHoi(data_CauHoi, callback) {
         if (!data_CauHoi || Object.keys(data_CauHoi).length === 0) {
             return callback(new Error("Dữ liệu không hợp lệ!"), null);
