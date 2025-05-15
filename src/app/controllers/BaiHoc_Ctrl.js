@@ -1,5 +1,7 @@
 const { response } = require('express');
 const BaiHoc = require('../models/baiHoc'); 
+const axios = require('axios');
+require('dotenv').config();
 
 class Controller {
     index(req, res) {
@@ -145,12 +147,10 @@ class Controller {
     insert_TienDo(req, res) {
         const { maNguoiDung, baiHocList } = req.body;
 
-        // Kiểm tra dữ liệu
         if (!maNguoiDung || !Array.isArray(baiHocList) || baiHocList.length === 0) {
             return res.status(400).json({ message: "Dữ liệu không hợp lệ!" });
         }
 
-        // Gọi model để insert tiến độ
         BaiHoc.insert_TienDo({ maNguoiDung, baiHocList }, (err, result) => {
             if (err) {
                 console.error("Lỗi khi thêm tiến độ:", err);
@@ -161,6 +161,49 @@ class Controller {
         });
     }
 
+    // Method lấy thông tin thời gian video
+    async get_Video_Info(req, res) {
+        try {
+        const { videoId } = req.params;
+        const apiKey = process.env.YOUTUBE_API_KEY;
+
+        if (!videoId) {
+            return res.status(400).json({ message: 'Thiếu videoId' });
+        }
+
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoId}&key=${apiKey}`;
+        const response = await axios.get(url);      
+
+        if (!response.data.items.length) {
+            return res.status(404).json({ message: 'Không tìm thấy video' });
+        }
+
+        // Lấy thời gian từ response
+        const duration = response.data.items[0].contentDetails.duration;
+
+        // Chuyển đổi thời gian ISO 8601 (VD: PT3M33S) sang phút:giây
+        const formattedDuration = Controller.formatDuration(duration);
+
+        res.json({ videoId, duration: formattedDuration });
+        } catch (error) {
+            console.error('Lỗi lấy thông tin video:', error.message);
+            res.status(500).json({ message: 'Lỗi server' });
+        }
+    }
+
+    // Hàm chuyển đổi ISO 8601 duration (VD: PT3M33S) sang định dạng phút:giây
+    static formatDuration(duration) {
+        const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+        const hours = parseInt(match[1]) || 0;
+        const minutes = parseInt(match[2]) || 0;
+        const seconds = parseInt(match[3]) || 0;
+
+        // Nếu có giờ, tính tổng thời gian theo phút
+        let totalMinutes = hours * 60 + minutes;
+        let formatted = `${totalMinutes}:${seconds.toString().padStart(2, '0')}`;
+
+        return formatted;
+    }
 }
 
 module.exports = new Controller();

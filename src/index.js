@@ -18,34 +18,7 @@ db.connect();
 const app = express();
 const port = 1000;
 
-// Cấu hình session
-// app.use(
-//   session({
-//     secret: "secret",
-//     resave: false,
-//     saveUninitialized: false, 
-//   })
-// );
-
 app.use(passport.initialize());
-
-// app.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", { session: false }),
-//   (req, res) => {
-//     const token = req.user.token;
-
-//     res.cookie('token', token, { 
-//       httpOnly: true,   
-//       secure: process.env.NODE_ENV === 'production',  
-//       maxAge: 3600000   
-//     });
-
-    
-//     // res.redirect("http://localhost:5173"); 
-//   }
-// );
-
 
 // Cấu hình Middleware
 app.use(cookieParser()); // Cho phép đọc cookie từ request
@@ -74,7 +47,6 @@ app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
 
-// app.listen(1000, '0.0.0.0', () => console.log("Running on 0.0.0.0:3000"));
 
 
 

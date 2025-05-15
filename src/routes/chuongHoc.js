@@ -3,12 +3,12 @@ const router = express.Router();
 const chuongHoc_Ctrl = require('../app/controllers/ChuongHoc_Ctrl');
 
 
-router.post('/create-chuong-hoc', chuongHoc_Ctrl.create);
-router.get('/selection-chuong-hoc/:maKhoaHoc', chuongHoc_Ctrl.selection);
-router.get('/lesson-details/:maChuongHoc', chuongHoc_Ctrl.lessonDetails);
-router.put('/update-lesson/:maChuongHoc', chuongHoc_Ctrl.update);
-router.delete('/delete-lesson/:maChuongHoc', chuongHoc_Ctrl.delete);
-router.get('/selection-chuong-hoc-byLecture/:maBaiHoc', chuongHoc_Ctrl.selection_byLecture);
+router.post('/api/lessons', chuongHoc_Ctrl.create);
+router.get('/api/lessons/selection-lessons/:maKhoaHoc', chuongHoc_Ctrl.selection);
+router.get('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.lessonDetails);
+router.put('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.update);
+router.delete('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.delete);
+router.get('/api/selection-chuong-hoc-byLecture/:maBaiHoc', chuongHoc_Ctrl.selection_byLecture);
 
 module.exports = router;
 

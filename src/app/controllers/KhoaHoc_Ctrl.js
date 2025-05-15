@@ -176,6 +176,8 @@ class Controller {
             res.status(200).json(result);
         })
     }
+
+    
 }
 
 module.exports = new Controller();
