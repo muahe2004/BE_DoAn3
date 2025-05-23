@@ -87,7 +87,7 @@ class NguoiDung {
     }
 
     static findByEmail(email, callback) {
-        const query = 'select maNguoiDung, tenNguoiDung, email, anhDaiDien from NguoiDung where email = ?';
+        const query = 'select maNguoiDung, tenNguoiDung, email, anhDaiDien, soDienThoai, github from NguoiDung where email = ?';
 
         connection.query(query, [email], (err, results) => {
             if (err) {

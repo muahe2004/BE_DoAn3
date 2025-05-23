@@ -9,13 +9,13 @@ router.post('/api/courses', khoaHoc_Ctrl.create);
 router.put('/api/courses/:maKhoaHoc', khoaHoc_Ctrl.update);
 router.delete('/api/courses/:maKhoaHoc', khoaHoc_Ctrl.delete);
 router.get('/api/courses/search/:tenKhoaHoc', khoaHoc_Ctrl.search);
-router.get('/api/courses/search-byID/:maKhoaHoc', khoaHoc_Ctrl.getByID);
+router.get('/api/courses/:maKhoaHoc', khoaHoc_Ctrl.getByID);
 router.get('/api/selection-courses', khoaHoc_Ctrl.selection);
 router.get('/api/courses/count-student', khoaHoc_Ctrl.count_Student);
 router.get('/api/courses/Revenue', khoaHoc_Ctrl.Revenue);
 router.get('/api/courses/count-lesson-and-lecure/:maKhoaHoc', khoaHoc_Ctrl.countLes_Lec);
-router.get('/api/courses/count-free', khoaHoc_Ctrl.countFree);
-router.get('/api/courses/count-vip', khoaHoc_Ctrl.countVip);
+router.get('/api/count-courses/count-free', khoaHoc_Ctrl.countFree);
+router.get('/api/count-courses/count-vip', khoaHoc_Ctrl.countVip);
 
 
 

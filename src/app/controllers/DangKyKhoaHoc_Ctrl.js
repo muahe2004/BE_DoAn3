@@ -70,7 +70,7 @@ class Controller {
     sumBenefit(req, res) {
         DangKyKhoaHoc.sumBenefit((err, result) => {
             if (err) {
-                return res.status(500).json({message: "Lỗi khi tính doanh thu"});
+                return res.status(500).json({message: "Lỗi khi tính doanh thu", error: err});
             }
             res.status(200).json(result);
         })

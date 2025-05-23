@@ -3,6 +3,8 @@ const crypto = require('crypto');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const nguoiDung_Model = require("../models/nguoiDung");
+const hoaDonNap_Model = require("../models/hoaDonNap");
+const { error } = require('console');
 
 exports.createPayment = async (req, res) => {
   const { amount, orderInfo } = req.body;
@@ -21,7 +23,7 @@ exports.createPayment = async (req, res) => {
   var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
   var partnerCode = 'MOMO';
   var redirectUrl = 'http://localhost:5173/payment-done';
-  var ipnUrl = 'https://92bf-2402-800-5d0e-5b62-3061-2b05-b6d4-654a.ngrok-free.app/payment/ipn';
+  var ipnUrl = 'https://e1aa-2402-800-6117-5626-111e-28db-123a-d7e4.ngrok-free.app/payment/ipn';
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -87,7 +89,47 @@ exports.handleIPN = (req, res) => {
     const extra = JSON.parse(Buffer.from(extraData, 'base64').toString());
     const maNguoiDung = extra.maNguoiDung;
 
+    const payMethod = "Momo E-Wallet";
+    const payStatus = "Thành công";
+    const payNote = null;
 
+
+    // Thêm hóa đơn vào csdl
+    /*
+      maHoaDon,
+      maNguoiDung,
+      soTien,
+      phuongThucNap (Momo E-Wallet),
+      trangThai (Thành công),
+      ghiChu (null cũng dc),
+      updateAt (null),
+      createdAt (default rồi)
+    */
+    console.log("Mã hóa đơn: ", orderId);
+    console.log("Mã người dùng: ",maNguoiDung);
+    console.log("Số tiền: ", amount);
+    console.log("Phương thức nạp: ", payMethod);
+    console.log("Trạng thái: ", payStatus);
+    console.log("Ghi chú: ", payNote);
+
+    const dataHoaDonNap = {
+      maHoaDon: orderId,
+      maNguoiDung: maNguoiDung,
+      soTien: amount,
+      phuongThucNap: payMethod,
+      trangThai: payStatus,
+      ghiChu: payNote
+    };
+
+    hoaDonNap_Model.create(dataHoaDonNap, (err, result) => {
+      if (err) {
+        console.error('Lỗi khi thêm hóa đơn nạp tiền!', err);
+      } else {
+        console.log(`Thêm hóa đơn nạp tiền ${orderId} thành công!`);
+      }
+    })
+
+    // cập nhật số dư
     nguoiDung_Model.deposit(amount, maNguoiDung, (err, result) => {
       if (err) {
         console.error('Lỗi cập nhật số dư:', err);

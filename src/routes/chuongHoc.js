@@ -8,7 +8,7 @@ router.get('/api/lessons/selection-lessons/:maKhoaHoc', chuongHoc_Ctrl.selection
 router.get('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.lessonDetails);
 router.put('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.update);
 router.delete('/api/lessons/:maChuongHoc', chuongHoc_Ctrl.delete);
-router.get('/api/selection-chuong-hoc-byLecture/:maBaiHoc', chuongHoc_Ctrl.selection_byLecture);
+router.get('/api/selection-lessons-byLecture/:maBaiHoc', chuongHoc_Ctrl.selection_byLecture);
 
 module.exports = router;
 

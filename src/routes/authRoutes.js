@@ -66,7 +66,7 @@ router.get('/role', (req, res) => {
     }
 });
 
-router.get('/balance', (req, res) => {
+router.get('/api/balance', (req, res) => {
     try {
         const token = req.cookies.token;
 
