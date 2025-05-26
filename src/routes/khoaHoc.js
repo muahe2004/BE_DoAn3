@@ -17,8 +17,4 @@ router.get('/api/courses/count-lesson-and-lecure/:maKhoaHoc', khoaHoc_Ctrl.count
 router.get('/api/count-courses/count-free', khoaHoc_Ctrl.countFree);
 router.get('/api/count-courses/count-vip', khoaHoc_Ctrl.countVip);
 
-
-
-
-
 module.exports = router;

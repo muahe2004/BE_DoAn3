@@ -3,33 +3,72 @@ const connection = require('../../config/db');
 
 class KhoaHoc {
 
-    static getAll_KhoaHoc(callback) {
-        const query = 
-            `
-                SELECT 
-                    kh.maKhoaHoc, 
-                    kh.tenKhoaHoc, 
-                    kh.moTaKhoaHoc, 
-                    kh.hinhAnh, 
-                    kh.doKho, 
-                    kh.giaBan, 
-                    COUNT(DISTINCT dk.maDangKy) AS soLuongDangKy,
-                    COUNT(DISTINCT bh.maBaiHoc) AS tongSoBaiHoc
-                FROM KhoaHoc kh
-                    LEFT JOIN DangKyKhoaHoc dk ON dk.maKhoaHoc = kh.maKhoaHoc
-                    LEFT JOIN ChuongHoc ch ON ch.maKhoaHoc = kh.maKhoaHoc
-                    LEFT JOIN BaiHoc bh ON bh.maChuongHoc = ch.maChuongHoc
-                GROUP BY 
-                    kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan;
+    static getAll_KhoaHoc(page, pageSize, count, callback) {
+    const offset = (page - 1) * pageSize;
 
-            `
-        connection.query(query, (err, result) => {
-            if (err) {
-                return callback(err, null);
-            }
-            callback(null, result);
-        })
+    // Query để lấy dữ liệu khóa học
+    const dataQuery = `
+        select 
+            kh.maKhoaHoc, 
+            kh.tenKhoaHoc, 
+            kh.moTaKhoaHoc, 
+            kh.hinhAnh, 
+            kh.doKho, 
+            kh.giaBan, 
+            count(distinct dk.maDangKy) as soLuongDangKy,
+            count(distinct bh.maBaiHoc) as tongSoBaiHoc
+        from KhoaHoc kh
+            left join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+            left join ChuongHoc ch on ch.maKhoaHoc = kh.maKhoaHoc
+            left join BaiHoc bh on bh.maChuongHoc = ch.maChuongHoc
+        group by 
+            kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan
+        order by kh.maKhoaHoc asc
+        limit ? offset ?
+    `;
+
+    if (count) {
+        // Tổng số khóa học (lần đầu)
+        const countQuery = `select count(*) as total from KhoaHoc`;
+
+        connection.query(countQuery, (err, countResult) => {
+            if (err) return callback(err, null);
+
+            const totalItems = countResult[0].total;
+            const totalPages = Math.ceil(totalItems / pageSize);
+
+            // Sau khi đếm, truy vấn dữ liệu
+            connection.query(dataQuery, [pageSize, offset], (err, dataResult) => {
+                if (err) return callback(err, null);
+
+                callback(null, {
+                    data: dataResult,
+                    pagination: {
+                        totalItems,
+                        totalPages,
+                        currentPage: page,
+                        pageSize
+                    }
+                });
+            });
+        });
+
+    } else {
+        // Nếu không cần đếm (các lần sau)
+        connection.query(dataQuery, [pageSize, offset], (err, dataResult) => {
+            if (err) return callback(err, null);
+
+            callback(null, {
+                data: dataResult,
+                pagination: {
+                    currentPage: page,
+                    pageSize
+                }
+            });
+        });
     }
+}
+
 
     static home_feeCourses(callback) {
         const query = 

@@ -3,11 +3,17 @@ const KhoaHoc = require('../models/khoaHoc'); // Import model
 
 class Controller {
     index(req, res) {
-        KhoaHoc.getAll_KhoaHoc((err, danhSachKhoaHoc) => {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 5;
+
+        // Lần đầu sẽ lấy ra tổng số trang
+        const count = req.query.count === 'true'; 
+        
+        KhoaHoc.getAll_KhoaHoc(page, pageSize, count, (err, result) => {
             if (err) {
-                return res.status(500).json({ message: 'Lỗi khi lấy danh sách khóa học.', error: err });
+                return res.status(500).json({ error: 'Lỗi truy vấn' });
             }
-            res.status(200).json(danhSachKhoaHoc);
+            res.json(result);
         });
     }
 

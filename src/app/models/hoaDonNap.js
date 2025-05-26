@@ -22,7 +22,12 @@ class HoaDonNap {
     }
 
     static get_by_User(maNguoiDung, callback) {
-        const query = "select * from HoaDonNap where maNguoiDung = ?";
+        const query = 
+            `   
+                select * from HoaDonNap 
+                where maNguoiDung = ? 
+                order by createdAt desc
+            `;
         connection.query(query, [maNguoiDung], (err, results) => {
             if (err) {
                 return callback(err, null);
