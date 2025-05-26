@@ -11,13 +11,34 @@ class Controller {
                 return res.status(403).json({ message: 'Bạn không có quyền truy cập!' });
             }
 
-            NguoiDung.index((err, result) => {
+            const page = parseInt(req.query.page) || 1;
+            const pageSize = parseInt(req.query.pageSize) || 5;
+
+            // Lần đầu sẽ lấy ra tổng số trang
+            const count = req.query.count === 'true'; 
+
+            NguoiDung.index(page, pageSize, count, (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
+                    }
+                    return res.status(200).json(result);
+            });
+        });
+    }
+
+    index(req, res) {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 5;
+
+        // Lần đầu sẽ lấy ra tổng số trang
+        const count = req.query.count === 'true'; 
+
+        NguoiDung.index(page, pageSize, count, (err, result) => {
                 if (err) {
                     return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
                 }
                 return res.status(200).json(result);
             });
-        });
     }
 
     create(req, res) {

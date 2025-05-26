@@ -2,15 +2,56 @@ const connection = require('../../config/db');
 
 class NguoiDung {
 
-    static index(callback) {
-        const query = 'select maNguoiDung, tenNguoiDung, email, soDu, anhDaiDien, loaiNguoiDung from NguoiDung';
-        connection.query(query, (err, results) => {
-            if (err) {
-                return callback(err, null);
-            }
-            callback(null, results);
-        })
+    static index(page, pageSize, count, callback) {
+
+        const offset = (page - 1) * pageSize;
+
+        const query = 
+            `
+                select maNguoiDung, tenNguoiDung, email, soDu, anhDaiDien, loaiNguoiDung
+                from NguoiDung 
+                limit ? offset ?
+            `;
+        
+        if (count) {
+            const countQuery = `select count(*) as total from NguoiDung`;
+
+            connection.query(countQuery, (err, countResult) => {
+                if (err) return callback(err, null);
+
+                const totalItems = countResult[0].total;
+                const totalPages = Math.ceil(totalItems / pageSize);
+
+                connection.query(query, [pageSize, offset], (err, dataResult) => {
+                    if (err) return callback(err, null);
+
+                    callback(null, {
+                        usersData: dataResult,
+                        pagination: {
+                            totalItems,
+                            totalPages,
+                            currentPage: page,
+                            pageSize
+                        }
+                    });
+                });
+            });
+
+        } else {
+            connection.query(query, [pageSize, offset], (err, dataResult) => {
+                if (err) return callback(err, null);
+
+                callback(null, {
+                    usersData: dataResult,
+                    pagination: {
+                        currentPage: page,
+                        pageSize
+                    }
+                });
+            });
+        }
     }
+
 
     static findByUsername(username, callback) {
         const query = 'select * from NguoiDung where email = ?';
