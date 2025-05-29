@@ -23,7 +23,7 @@ exports.createPayment = async (req, res) => {
   var secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
   var partnerCode = 'MOMO';
   var redirectUrl = 'http://localhost:5173/payment-done';
-  var ipnUrl = 'https://4ae0-14-235-60-19.ngrok-free.app/payment/ipn';
+  var ipnUrl = 'https://0bf8-14-235-60-19.ngrok-free.app/payment/ipn';
   var requestType = "payWithMethod";
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;

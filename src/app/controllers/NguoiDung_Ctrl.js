@@ -18,10 +18,10 @@ class Controller {
             const count = req.query.count === 'true'; 
 
             NguoiDung.index(page, pageSize, count, (err, result) => {
-                    if (err) {
-                        return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
-                    }
-                    return res.status(200).json(result);
+                if (err) {
+                    return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
+                }
+                return res.status(200).json(result);
             });
         });
     }
