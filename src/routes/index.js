@@ -10,7 +10,7 @@ const dangKyKhoaHoc = require('./dangKyKhoaHoc');
 const authGoogle = require('./auThenGoogle');
 const paymentMomo = require('./paymentMomo');
 const aiChat = require('./aiChatGemini');
-
+const bill = require("./hoaDon");
 
 
 
@@ -28,6 +28,7 @@ function route(app) {
     app.use('/', authGoogle);
     app.use('/', paymentMomo);
     app.use('/', aiChat);
+    app.use('/', bill);
 }
 
 module.exports = route;

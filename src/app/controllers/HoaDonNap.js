@@ -5,8 +5,6 @@ class Controller {
     get_by_ID(req, res) {
         const maHoaDon = req.params.maHoaDon;
 
-        
-
         HoaDonNap.get_by_ID(maHoaDon, (err, result) => {
             if (err) {
                 return res.status(500).json({ message: "Lỗi khi lấy hóa đơn nạp!", error: err });
