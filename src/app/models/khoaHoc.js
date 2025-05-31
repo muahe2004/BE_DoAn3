@@ -2,11 +2,9 @@
 const connection = require('../../config/db');
 
 class KhoaHoc {
-
     static getAll_KhoaHoc(page, pageSize, count, callback) {
         const offset = (page - 1) * pageSize;
 
-        // Query để lấy dữ liệu khóa học
         const dataQuery = `
             select 
                 kh.maKhoaHoc, 
@@ -15,14 +13,18 @@ class KhoaHoc {
                 kh.hinhAnh, 
                 kh.doKho, 
                 kh.giaBan, 
+                kh.maGiangVien,
+                nd.tenNguoiDung,
+                nd.anhDaiDien,
                 count(distinct dk.maDangKy) as soLuongDangKy,
                 count(distinct bh.maBaiHoc) as tongSoBaiHoc
             from KhoaHoc kh
                 left join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
                 left join ChuongHoc ch on ch.maKhoaHoc = kh.maKhoaHoc
                 left join BaiHoc bh on bh.maChuongHoc = ch.maChuongHoc
+                left join NguoiDung nd on kh.maGiangVien = nd.maNguoiDung
             group by 
-                kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan
+                kh.maKhoaHoc, kh.tenKhoaHoc, kh.moTaKhoaHoc, kh.hinhAnh, kh.doKho, kh.giaBan, kh.maGiangVien, nd.tenNguoiDung, nd.anhDaiDien
             order by kh.maKhoaHoc asc
             limit ? offset ?
         `;

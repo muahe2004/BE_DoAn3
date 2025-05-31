@@ -63,7 +63,7 @@ class Controller {
 
             try {
                 const hashedPassword = await bcrypt.hash(matKhau, 10);
-                const newUser = { ...data_NguoiDung, matKhau: hashedPassword, loaiNguoiDung: loaiNguoiDung || 'Học viên' };
+                const newUser = { ...data_NguoiDung, matKhau: hashedPassword, loaiNguoiDung: loaiNguoiDung || 'Người dùng' };
 
                 NguoiDung.create(newUser, (err, result) => {
                     if (err) {

@@ -14,11 +14,9 @@ class Controller {
                 console.error("Lỗi MySQL:", err);
                 return res.status(500).json({ error: "Lỗi server!", details: err });
             }
-    
-            console.log("Kết quả:", result);
-            res.status(200).json({
+                res.status(200).json({
                 message: 'Đăng ký khóa học thành công!',
-                data: result, // Trả về thông tin kết quả
+                data: result, 
             });
         });
     }

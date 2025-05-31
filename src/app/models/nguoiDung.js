@@ -76,7 +76,7 @@ class NguoiDung {
             let newID = `ND${String(maxID).padStart(3, "0")}`;
     
             dataNguoiDung.maNguoiDung = newID;
-            dataNguoiDung.loaiNguoiDung = 'Học viên';
+            dataNguoiDung.loaiNguoiDung = 'Người dùng';
             dataNguoiDung.soDu = 0;
             dataNguoiDung.anhDaiDien = 'http://localhost:1000/uploads/defaultAvatar.png';
     
