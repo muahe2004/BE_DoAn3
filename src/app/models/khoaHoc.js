@@ -145,7 +145,6 @@ class KhoaHoc {
         });
     }
     
-
     static update_KhoaHoc(maKhoaHoc, dataKhoaHoc, callback) {
         const query = 'update KhoaHoc set ? where maKhoaHoc = ?';
         connection.query(query, [dataKhoaHoc, maKhoaHoc], (err, results) => {
