@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const NguoiDung = require('../app/models/nguoiDung');
 require('dotenv').config();
 
-
 const router = express.Router();
 
 router.post('/login', (req, res) => {
@@ -31,7 +30,6 @@ router.post('/login', (req, res) => {
             { expiresIn: '1h' }
         );
 
-        // 🔥 Đặt res.cookie() TRƯỚC res.json()
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,    
@@ -95,7 +93,6 @@ router.get('/api/balance', (req, res) => {
         return res.status(401).json({ message: "Token không hợp lệ!", err });
     }
 });
-
 
 router.post('/logout', (req, res) => {
     res.clearCookie('token', {

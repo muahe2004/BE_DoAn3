@@ -52,7 +52,6 @@ class NguoiDung {
         }
     }
 
-
     static findByUsername(username, callback) {
         const query = 'select * from NguoiDung where email = ?';
         
@@ -90,7 +89,6 @@ class NguoiDung {
         });
     }
     
-
     static update(maNguoiDung, data_NguoiDung, callback) {
         const query = 'update NguoiDung set ? where maNguoiDung = ?';
         connection.query(query, [data_NguoiDung, maNguoiDung], (err, results) => {
@@ -148,7 +146,6 @@ class NguoiDung {
             callback(null, results);
         });
     }
-    
 }
 
 module.exports = NguoiDung;

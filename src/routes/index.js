@@ -12,10 +12,7 @@ const paymentMomo = require('./paymentMomo');
 const aiChat = require('./aiChatGemini');
 const bill = require("./hoaDon");
 
-
-
 function route(app) {
-
     app.use('/', khoaHoc);
     app.use('/', baiHoc);
     app.use('/', cauHoi);

@@ -1,6 +1,5 @@
 const ChuongHoc = require("../models/chuongHoc");
 
-
 class Controller {
     create(req, res, next) {
         const dataChuongHoc = req.body;

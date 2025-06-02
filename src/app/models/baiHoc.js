@@ -1,4 +1,3 @@
-// Kết nối cơ sở dữ liệu
 const connection = require('../../config/db');
 const crypto = require('crypto');
 

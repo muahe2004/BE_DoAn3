@@ -1,4 +1,3 @@
-// Kết nối cơ sở dữ liệu
 const connection = require('../../config/db');
 
 class KhoaHoc {
@@ -70,7 +69,6 @@ class KhoaHoc {
             });
         }
     }
-
 
     static home_feeCourses(callback) {
         const query = 

@@ -3,7 +3,6 @@ const NguoiDung = require('../models/nguoiDung');
 const { cookieToken } = require('../middlewares/authMiddleware');
 const bcrypt = require('bcryptjs');
 
-
 class Controller {
     index(req, res) {
         cookieToken(req, res, () => {
@@ -34,11 +33,11 @@ class Controller {
         const count = req.query.count === 'true'; 
 
         NguoiDung.index(page, pageSize, count, (err, result) => {
-                if (err) {
-                    return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
-                }
-                return res.status(200).json(result);
-            });
+            if (err) {
+                return res.status(500).json({ message: "Lỗi khi lấy người dùng!" });
+            }
+            return res.status(200).json(result);
+        });
     }
 
     create(req, res) {
@@ -52,7 +51,7 @@ class Controller {
 
         const { email, matKhau, loaiNguoiDung } = data_NguoiDung;
 
-        // 🔥 Kiểm tra username đã tồn tại chưa
+        // Kiểm tra username đã tồn tại chưa
         NguoiDung.findByUsername(email, async (err, user) => {
             if (err) {
                 return res.status(500).json({ message: 'Lỗi server', error: err });
@@ -79,7 +78,6 @@ class Controller {
             }
         });
     }
-
 
     update(req, res) {
         const maNguoiDung = req.params.maNguoiDung;

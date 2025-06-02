@@ -1,5 +1,5 @@
 const { json } = require('express');
-const KhoaHoc = require('../models/khoaHoc'); // Import model
+const KhoaHoc = require('../models/khoaHoc'); 
 
 class Controller {
     index(req, res) {
@@ -116,7 +116,7 @@ class Controller {
                 return res.status(500).json({ message: "Lỗi khi lấy thông tin khóa học!", error: err });
             }
             if (result.length > 0) {
-                res.status(200).json(result[0]); // ⚡ Chỉ trả về object thay vì mảng
+                res.status(200).json(result[0]); 
             } else {
                 res.status(404).json({ message: "Không tìm thấy khóa học" });
             }
@@ -182,8 +182,6 @@ class Controller {
             res.status(200).json(result);
         })
     }
-
-    
 }
 
 module.exports = new Controller();

@@ -37,7 +37,7 @@ class Controller {
         const pageSize = parseInt(req.query.pageSize) || 5;
 
         // Lần đầu sẽ lấy ra tổng số trang
-            const count = req.query.count === 'true'; 
+        const count = req.query.count === 'true'; 
 
         HoaDon.get_by_User(page, pageSize, count, maNguoiDung, (err, result) => {
             if (err) {

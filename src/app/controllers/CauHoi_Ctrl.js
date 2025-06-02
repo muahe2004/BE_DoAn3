@@ -1,5 +1,5 @@
 const { response } = require('express');
-const CauHoi = require('../models/cauHoi'); // Import model
+const CauHoi = require('../models/cauHoi'); 
 
 class Controller {
     index(req, res) {
@@ -46,8 +46,6 @@ class Controller {
             });
         });
     }
-    
-
     
     update(req, res, next) {
         const maCauHoi = req.params.maCauHoi;
