@@ -2,7 +2,6 @@ const connection = require("../../config/db");
 
 class DangKyKhoaHoc {
     static create(dataDangKy, callback) {
-        // Khởi tạo biến @maDangKy
         connection.query("SET @maDangKy = NULL", (err) => {
             if (err) return callback(err, null);
 
@@ -109,9 +108,19 @@ class DangKyKhoaHoc {
             callback(null, results[0].tongDoanhThu)
         })
     }
+
+    static checkStudent(maKhoaHoc, callback) {
+        const query = `select maDangKy from DangKyKhoaHoc where maKhoaHoc = ? limit 1`;
+
+        connection.query(query, [maKhoaHoc], (err, result) => {
+            if(err) {
+                return callback(err, null);
+            }
+            const checked = result.length > 0;
+            return callback(null, checked);
+        })
+    }
 }
 
-
-
-
 module.exports = DangKyKhoaHoc;
+

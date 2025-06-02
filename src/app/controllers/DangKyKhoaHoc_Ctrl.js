@@ -73,6 +73,16 @@ class Controller {
             res.status(200).json(result);
         })
     }
+
+    checkStudent(req, res) {
+        const maKhoaHoc = req.params.maKhoaHoc;
+        DangKyKhoaHoc.checkStudent(maKhoaHoc, (err, checked) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi kiểm tra học viên!", error: err});
+            }
+            return res.status(200).json({checked: true});
+        })
+    }
 }
 
 module.exports = new Controller;

@@ -8,5 +8,6 @@ router.get("/api/analysis-courses/benefit/:distance", dangKyKhoaHoc_Ctrl.benefit
 router.get("/api/analysis-courses/most-courses", dangKyKhoaHoc_Ctrl.most);
 router.get("/api/analysis-courses/sum-student", dangKyKhoaHoc_Ctrl.sumStudent);
 router.get("/api/analysis-courses/sum-benefit", dangKyKhoaHoc_Ctrl.sumBenefit);
+router.get("/api/courses/check-student/:maKhoaHoc", dangKyKhoaHoc_Ctrl.checkStudent);
 
 module.exports = router;
