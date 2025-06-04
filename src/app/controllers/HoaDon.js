@@ -47,6 +47,22 @@ class Controller {
             res.status(200).json(result);
         });
     }
+
+    benefit(req, res) {
+        const distance = req.params.distance;
+
+        if (!distance) {
+            return res.status(400).json({ message: "Chưa chọn số tháng cần thống kê"});
+        }
+
+        HoaDon.benefit(distance, (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: `Lỗi khi thống kê doanh thu ${distance} tháng`, error: err});
+            }
+
+            return res.status(200).json(results);;
+        })
+    }
 }
 
 module.exports = new Controller();

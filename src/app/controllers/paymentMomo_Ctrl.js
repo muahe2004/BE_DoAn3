@@ -93,24 +93,12 @@ exports.handleIPN = (req, res) => {
     const payStatus = "Thành công";
     const payNote = null;
 
-
-    // Thêm hóa đơn vào csdl
-    /*
-      maHoaDon,
-      maNguoiDung,
-      soTien,
-      phuongThucNap (Momo E-Wallet),
-      trangThai (Thành công),
-      ghiChu (null cũng dc),
-      updateAt (null),
-      createdAt (default rồi)
-    */
-    console.log("Mã hóa đơn: ", orderId);
-    console.log("Mã người dùng: ",maNguoiDung);
-    console.log("Số tiền: ", amount);
-    console.log("Phương thức nạp: ", payMethod);
-    console.log("Trạng thái: ", payStatus);
-    console.log("Ghi chú: ", payNote);
+    // console.log("Mã hóa đơn: ", orderId);
+    // console.log("Mã người dùng: ",maNguoiDung);
+    // console.log("Số tiền: ", amount);
+    // console.log("Phương thức nạp: ", payMethod);
+    // console.log("Trạng thái: ", payStatus);
+    // console.log("Ghi chú: ", payNote);
 
     const dataHoaDonNap = {
       maHoaDon: orderId,
@@ -121,6 +109,7 @@ exports.handleIPN = (req, res) => {
       ghiChu: payNote
     };
 
+    // Thêm hoá đơn
     hoaDonNap_Model.create(dataHoaDonNap, (err, result) => {
       if (err) {
         console.error('Lỗi khi thêm hóa đơn nạp tiền!', err);
@@ -141,6 +130,5 @@ exports.handleIPN = (req, res) => {
   } else {
     console.log(`Giao dịch thất bại - orderId: ${orderId}, resultCode: ${resultCode}`);
   }
-
   res.status(200).send('IPN received');
 };

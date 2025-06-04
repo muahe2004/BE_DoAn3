@@ -3,7 +3,7 @@ const connection = require("../../config/db");
 class HoaDon {
     static create(dataHoaDon, callback) {
 
-        const getMaxIDQuery = 'select max(cast(substring(maHoaDon, 3, 10) AS UNSIGNED)) as maxID from HoaDon';
+        const getMaxIDQuery = 'select max(cast(substring(maHoaDon, 5) AS UNSIGNED)) as maxID from HoaDon';
         const insertQuery = 'insert into HoaDon set ?';
         
         connection.query(getMaxIDQuery, (err, results) => {
@@ -81,6 +81,28 @@ class HoaDon {
                 });
             });
         }
+    }
+
+    static benefit(distance, callback) {
+        const limit = parseInt(distance);
+        const query = 
+            `
+                SELECT 
+                    DATE_FORMAT(createdAt, '%Y-%m') AS thang,
+                    SUM(soTien) AS doanhThu
+                FROM HoaDon
+                WHERE createdAt >= DATE_SUB(now(), INTERVAL ${limit} MONTH)
+                AND createdAt <= now()
+                GROUP BY thang
+                ORDER BY thang ASC
+                LIMIT ?
+            `;
+        connection.query(query, [limit], (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        })
     }
 }
 

@@ -83,7 +83,7 @@ router.get(
                 res.cookie('token', token, {
                     httpOnly: true,
                     secure: false,
-                    maxAge: 3600000,
+                    maxAge: 86400000,
                 });
 
                 return res.redirect(`http://localhost:5173`);
