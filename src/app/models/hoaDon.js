@@ -95,7 +95,7 @@ class HoaDon {
                 AND createdAt <= now()
                 GROUP BY thang
                 ORDER BY thang ASC
-                LIMIT ?
+                LIMIT ${limit}
             `;
         connection.query(query, [limit], (err, results) => {
             if (err) {

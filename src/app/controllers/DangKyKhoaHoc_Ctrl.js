@@ -83,6 +83,25 @@ class Controller {
             return res.status(200).json({checked: true});
         })
     }
+
+    count_Student(req, res) {
+        const check = req.params.check;
+        DangKyKhoaHoc.count_Student(check, (err, results) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi đếm học viên!", error: err});
+            }
+            return res.status(200).json(results);
+        })
+    }
+
+    courseCountByUser(req, res) {
+        DangKyKhoaHoc.courseCountByUser((err, results) => {
+            if (err) {
+                return res.status(500).json({message: "Lỗi khi đếm số khoá học của học viên!", error: err});
+            }
+            return res.status(200).json(results);
+        })
+    }
 }
 
 module.exports = new Controller;

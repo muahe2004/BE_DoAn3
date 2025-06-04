@@ -120,6 +120,47 @@ class DangKyKhoaHoc {
             return callback(null, checked);
         })
     }
+
+    static count_Student(check, callback) {
+        const checker = check === "free" ? "=" : ">";  
+        const query = `
+            select kh.maKhoaHoc, kh.tenKhoaHoc, count(dk.maKhoaHoc) as soHocVien
+            from KhoaHoc kh 
+            left join DangKyKhoaHoc dk on dk.maKhoaHoc = kh.maKhoaHoc
+            where kh.giaBan ${checker} 0
+            group by kh.maKhoaHoc, kh.tenKhoaHoc
+        `;
+
+        connection.query(query, (err, results) => {
+            if(err) {
+                return callback(err, null);
+            }
+            return callback(null, results);
+        })
+    }
+
+    static courseCountByUser(callback) {
+        const query = `
+            SELECT 
+                nd.maNguoiDung,
+                nd.tenNguoiDung,
+                COUNT(DISTINCT dk.maKhoaHoc) AS soKhoaHoc
+            FROM 
+                DangKyKhoaHoc dk
+            JOIN 
+                NguoiDung nd ON dk.maNguoiDung = nd.maNguoiDung
+            GROUP BY 
+                nd.maNguoiDung, nd.tenNguoiDung
+            LIMIT 10;
+        `;
+
+        connection.query(query, (err, results) => {
+            if(err) {
+                return callback(err, null);
+            }
+            return callback(null, results);
+        })
+    }
 }
 
 module.exports = DangKyKhoaHoc;
