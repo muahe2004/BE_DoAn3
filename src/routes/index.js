@@ -12,6 +12,8 @@ const paymentMomo = require('./paymentMomo');
 const aiChat = require('./aiChatGemini');
 const bill = require("./hoaDon");
 const cloud = require("./cloudinary");
+const article = require("./baiViet");
+
 
 function route(app) {
     app.use('/', khoaHoc);
@@ -28,6 +30,7 @@ function route(app) {
     app.use('/', aiChat);
     app.use('/', bill);
     app.use('/', cloud);
+    app.use('/', article);
 }
 
 module.exports = route;
