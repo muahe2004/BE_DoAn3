@@ -1,29 +1,23 @@
 const express = require('express');
-const upload = require('../config/uploadConfig');
+const upload_temp = require('../config/uploadTemp');
 const router = express.Router();
 const cloudinary = require('../config/cloudinaryConfig'); 
 const fs = require('fs').promises;
 const path = require('path'); 
 
-router.post('/api/cloudinary-upload', upload.single('file'), async (req, res) => {
+router.post('/api/cloudinary-upload', upload_temp.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'Không có file nào được tải lên' });
     }
 
-    // Tạo đường dẫn đầy đủ đến file tạm
-    const filePath = path.join(__dirname, '../public/uploads', req.file.filename);
-    try {
-      await fs.access(filePath); // Kiểm tra file tồn tại
-    } catch {
-      return res.status(400).json({ message: `File không tồn tại: ${filePath}` });
-    }
+    const filePath = req.file.path; 
 
     // Upload lên Cloudinary
     const result = await cloudinary.uploader.upload(filePath, {
       folder: 'my_app_images',
       resource_type: 'image',
-      public_id: path.parse(req.file.filename).name // Dùng tên file gốc, bỏ phần mở rộng
+      public_id: path.parse(req.file.filename).name
     });
 
     // Xóa file tạm
@@ -33,15 +27,13 @@ router.post('/api/cloudinary-upload', upload.single('file'), async (req, res) =>
       console.error(`Không xóa được file tạm: ${filePath}`, error);
     }
 
-    // Trả về URL từ Cloudinary
     res.json({
       message: 'Upload thành công',
       imageUrl: result.secure_url,
       public_id: result.public_id
     });
   } catch (error) {
-    // Xóa file tạm nếu upload thất bại
-    if (req.file && req.file.path) {
+    if (req.file?.path) {
       try {
         await fs.unlink(req.file.path);
       } catch (unlinkError) {
