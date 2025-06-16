@@ -29,11 +29,11 @@ class Controller {
             return res.status(400).json({ message: "Chưa có mã bài viết!" });
         }
 
-        BaiViet.get_byID(maBaiViet, (err, result) => {
+        BaiViet.get_BaiViet_byID(maBaiViet, (err, result) => {
             if (err) {
                 return res.status(500).json({ message: "Lỗi khi lấy bài viết!", error: err });
             }
-            res.status(200).json({ result });
+            res.status(200).json(result[0]);
         })
     }
 }

@@ -26,9 +26,9 @@ class BaiHoc {
     }
 
     static get_BaiViet_byID(maBaiViet, callback) {
-        const query = 'select * from BaiViet where ?';
+        const query = 'select * from BaiViet where maBaiViet = ?';
 
-        connection.query(maBaiViet, (err, results) => {
+        connection.query(query, [maBaiViet], (err, results) => {
             if (err) {
                 return callback(err, null);
             }

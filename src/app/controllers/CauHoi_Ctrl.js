@@ -4,6 +4,11 @@ const CauHoi = require('../models/cauHoi');
 class Controller {
     index(req, res) {
         const maBaiHoc = req.params.maBaiHoc;
+
+        if (!maBaiHoc) {
+            return res.status(400).json({ message: "Chưa có mã bài học!"});
+        }
+
         CauHoi.index(maBaiHoc, (err, result) => {
             if (err) {
                 return res.status(500).json({message: "Lỗi khi lấy danh sách câu hỏi", error: err});
